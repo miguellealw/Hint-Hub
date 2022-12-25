@@ -40,13 +40,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String       @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?      @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  Hint          Hint[]
+  Collection    Collection[]
 }
 
 model VerificationToken {
@@ -55,4 +57,26 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Hint {
+  id           String     @id @default(cuid())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  title        String
+  content      String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  collectionId String
+  Collection   Collection @relation(fields: [collectionId], references: [id])
+}
+
+model Collection {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  hints     Hint[]
 }
