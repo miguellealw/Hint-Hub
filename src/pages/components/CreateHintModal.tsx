@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Modal, Button, Group, TextInput } from '@mantine/core';
 import RREditor from './RichTextEditor';
+import {CreatableSelect as CollectionSelect} from './CreatableSelect';
 
 type CreateHintModalProps = {
   isModalOpen: boolean;
@@ -16,6 +17,7 @@ export default function CreateHintModal({ isModalOpen, setModalOpen }: CreateHin
       size="xl"
     >
       <TextInput label="Title" placeholder="Title" />
+      <CollectionSelect mt="lg" />
       <RREditor mt="lg" />
     </Modal>
   );
