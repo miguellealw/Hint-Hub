@@ -15,8 +15,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <>
       <Head>
-        <title>Page title</title>
-        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        <title>Hint Hub</title>
+        <meta name="description" content="Virtual Sticky Notes for Power Users" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <MantineProvider
