@@ -1,7 +1,11 @@
 import { TextInput, TextInputProps, ActionIcon, useMantineTheme } from '@mantine/core';
 import { IconSearch, IconArrowRight, IconArrowLeft } from '@tabler/icons';
 
-export function InputWithButton(props: TextInputProps) {
+type InputWithButtonProps = TextInputProps & {
+  ref: React.RefObject<HTMLInputElement>;
+}
+
+export function InputWithButton(props: InputWithButtonProps) {
   const theme = useMantineTheme();
 
   return (
@@ -19,7 +23,7 @@ export function InputWithButton(props: TextInputProps) {
           )}
         </ActionIcon>
       }
-      placeholder="Search hints"
+      placeholder="Search hints ('/')"
       rightSectionWidth={42}
       {...props}
     />

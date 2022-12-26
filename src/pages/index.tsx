@@ -36,7 +36,6 @@ const Home: NextPage = () => {
       </Text>
 
       <Button size="md" color="indigo.8" style={{ alignSelf: "center" }} leftIcon={<IconFilePlus size={18} />}>
-        {/* <Link href="/create-hint"> */}
         <Link href="/hints">
           Create Hint
         </Link>
