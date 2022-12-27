@@ -6,10 +6,10 @@ import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 export const collectionRouter = router({
   // TODO: make private procedure
-  get: protectedProcedure
+  getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input, ctx }) => {
-      ctx.prisma.collection.findUnique({
+      return ctx.prisma.collection.findUnique({
         where: {
           id: input.id,
         },

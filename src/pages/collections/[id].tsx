@@ -1,4 +1,4 @@
-import { Button, Group, SimpleGrid, Title, Tooltip } from "@mantine/core"
+import { Button, Group, Loader, SimpleGrid, Title, Tooltip } from "@mantine/core"
 import { IconEdit, IconFilePlus, IconTrash } from "@tabler/icons";
 import { type NextPage } from "next";
 import { InputWithButton as SearchBar } from "../components/InputWithButton";
@@ -7,6 +7,8 @@ import { useRef, useState } from 'react';
 import CreateHintModal from "../components/CreateHintModal";
 import { useHotkeys } from "@mantine/hooks";
 import HintCard from "../components/HintCard";
+import { trpc } from "../../utils/trpc";
+import { useRouter } from "next/router";
 
 
 const testHints = [
@@ -66,42 +68,52 @@ const SingleCollection: NextPage = () => {
   useHotkeys([
     ["c", () => setModalOpen(true)],
     // FIXME: SearchBarRef is null
-    ["/", () => SearchBarRef.current?.focus()]
+    // ["/", () => SearchBarRef.current?.focus()]
   ])
+  const router = useRouter();
+
+  console.log(router.query.id);
+  const { data: currentCollection, isFetching, isLoading } = trpc.collection.getById.useQuery({ id: router.query.id as string });
 
   return (
     <MainLayout containerSize="md">
-      <CreateHintModal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />
+      {isLoading ? <Loader color="indigo"/> : (
+        <>
+          <CreateHintModal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />
 
-      <Group position="apart" align="center" my="xl">
-        <Group align="center">
-          <Title align="center">Terminal Commands</Title>
-          <IconEdit size={20} style={{cursor: "pointer"}}/>
-          <IconTrash size={20} style={{cursor: "pointer"}}/>
-        </Group>
+          <Group position="apart" align="center" my="xl">
+            <Group align="center">
+              {/* <Title align="center">Terminal Commands</Title> */}
+              <Title align="center">{currentCollection?.name}</Title>
+              <IconEdit size={20} style={{ cursor: "pointer" }} />
+              <IconTrash size={20} style={{ cursor: "pointer" }} />
+            </Group>
 
-        {/* TODO: show cmd or ctrl depending on OS */}
-        {/* <Tooltip label="Create Hint (⌘ + K)"> */}
-        <Tooltip label="Create Hint ('C')">
-          <Button color="indigo.8" leftIcon={<IconFilePlus size={18} />} onClick={() => setModalOpen(true)}>
-            Create Hint
-          </Button>
-        </Tooltip>
-      </Group>
+            {/* TODO: show cmd or ctrl depending on OS */}
+            {/* <Tooltip label="Create Hint (⌘ + K)"> */}
+            <Tooltip label="Create Hint ('C')">
+              <Button color="indigo.8" leftIcon={<IconFilePlus size={18} />} onClick={() => setModalOpen(true)}>
+                Create Hint
+              </Button>
+            </Tooltip>
+          </Group>
 
-      <SearchBar ref={SearchBarRef} mb="xl" />
+          <SearchBar ref={SearchBarRef} mb="xl" />
 
-      <ul style={{ paddingLeft: 0 }}>
-        <SimpleGrid cols={2} spacing="xl">
-          {
-            testHints.map(hint => (
-              <HintCard key={hint.id} hint={hint} />
-            ))
-          }
-        </SimpleGrid>
-      </ul>
+          <ul style={{ paddingLeft: 0 }}>
+            <SimpleGrid cols={2} spacing="xl">
+              {
+                testHints.map(hint => (
+                  <HintCard key={hint.id} hint={hint} />
+                ))
+              }
+            </SimpleGrid>
+          </ul>
+        </>
+      )}
     </MainLayout>
   )
+
 }
 
 
