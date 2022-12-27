@@ -34,8 +34,8 @@ export default function HintCard({ title, content, ...props }: HintCardProps) {
   return (
     // <Card shadow="sm" padding="xl" radius="md" my="md">
     <li {...props} style={{ listStyleType: "none", position: "relative" }}>
-      <Group position="apart">
-        <Title order={6} mb="sm">{title}</Title>
+      <Group position="apart" align="center" mb="sm">
+        <Title order={6}>{title}</Title>
         <HintCardMenu classes={classes} />
       </Group>
       {/* must be 'div' instead of 'p', or it will give hydration error */}
