@@ -2,7 +2,7 @@ import { TextInput, TextInputProps, ActionIcon, useMantineTheme } from '@mantine
 import { IconSearch, IconArrowRight, IconArrowLeft } from '@tabler/icons';
 
 type InputWithButtonProps = TextInputProps & {
-  ref: React.RefObject<HTMLInputElement>;
+  ref?: React.RefObject<HTMLInputElement>;
 }
 
 export function InputWithButton(props: InputWithButtonProps) {
@@ -25,6 +25,7 @@ export function InputWithButton(props: InputWithButtonProps) {
       }
       placeholder="Search hints ('/')"
       rightSectionWidth={42}
+      // TODO: fix ref with ForwardRef or somn
       {...props}
     />
   );
