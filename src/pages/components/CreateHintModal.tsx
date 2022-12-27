@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Modal, Button, Group, TextInput } from '@mantine/core';
+import { Modal, Button, Group, TextInput, Switch } from '@mantine/core';
 import RREditor from './RichTextEditor';
-import {CreatableSelect as CollectionSelect} from './CreatableSelect';
+import { CreatableSelect as CollectionSelect } from './CreatableSelect';
 
 type CreateHintModalProps = {
   isModalOpen: boolean;
@@ -18,6 +18,7 @@ export default function CreateHintModal({ isModalOpen, setModalOpen }: CreateHin
     >
       <TextInput label="Title" placeholder="Title" />
       <CollectionSelect mt="lg" />
+      <Switch description="Select 'code' if hint only contains code" labelPosition="left" offLabel="Rich Text" onLabel="Code" size="lg" mt="lg" />
       <RREditor mt="lg" />
     </Modal>
   );

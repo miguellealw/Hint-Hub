@@ -16,32 +16,49 @@ const testHints = [
   {
     id: 1,
     title: "How to create a new file in terminal",
-    content: "To create a new file in terminal, use the touch command. For example, to create a new file called index.html, you would type touch index.html."
+    isCode: false,
+    content: "To create a new file in terminal, use the touch command. For example, to create a new file called index.html, you would type <code>touch index.html</code>."
   },
   {
     id: 2,
     title: "How to create a new folder in terminal",
+    isCode: false,
     content: "To create a new folder in terminal, use the mkdir command. For example, to create a new folder called images, you would type mkdir images."
   },
   {
     id: 3,
     title: "How to delete a file in terminal",
+    isCode: false,
     content: "To delete a file in terminal, use the rm command. For example, to delete a file called index.html, you would type rm index.html."
   },
   {
     id: 4,
     title: "How to delete a folder in terminal",
+    isCode: false,
     content: "To delete a folder in terminal, use the rm -r command. For example, to delete a folder called images, you would type rm -r images."
   },
   {
     id: 5,
     title: "How to move a file in terminal",
+    isCode: false,
     content: "To move a file in terminal, use the mv command. For example, to move a file called index.html to a folder called images, you would type mv index.html images."
   },
   {
     id: 6,
     title: "Test Rich Text",
+    isCode: false,
     content: '<h2 style="text-align: left;">Welcome to Mantine rich text editor</h2><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul>'
+  },
+  {
+    id: 7,
+    title: "Hello World in Python",
+    isCode: true,
+    content: `
+def main():
+  print("Hello World") 
+
+main()
+    `
   }
 ]
 
@@ -77,7 +94,7 @@ const Hints: NextPage = () => {
         <SimpleGrid cols={2} spacing="xl">
           {
             testHints.map(hint => (
-              <HintCard key={hint.id} title={hint.title} content={hint.content} />
+              <HintCard key={hint.id} hint={hint}/>
             ))
           }
         </SimpleGrid>

@@ -4,11 +4,15 @@ import { NextPage } from "next";
 import parse from 'html-react-parser';
 import { IconEdit } from "@tabler/icons";
 import HintCardMenu from "./HintCardMenu";
+import { Prism } from "@mantine/prism";
 
 type HintCardProps = {
-  // id: number;
-  title: string;
-  content: string;
+  hint: {
+    id: number;
+    title: string;
+    isCode: boolean;
+    content: string;
+  }
 }
 
 const useStyles = createStyles(theme => ({
@@ -28,20 +32,23 @@ const useStyles = createStyles(theme => ({
   },
 }))
 
-export default function HintCard({ title, content, ...props }: HintCardProps) {
+export default function HintCard({ hint, ...props }: HintCardProps) {
   const { classes, cx } = useStyles();
 
   return (
     // <Card shadow="sm" padding="xl" radius="md" my="md">
     <li {...props} style={{ listStyleType: "none", position: "relative" }}>
       <Group position="apart" align="center" mb="sm">
-        <Title order={6}>{title}</Title>
+        <Title order={6}>{hint.title}</Title>
         <HintCardMenu classes={classes} />
       </Group>
       {/* must be 'div' instead of 'p', or it will give hydration error */}
-      <div className={classes.card}>
-        {parse(content)}
-      </div>
+
+      {
+        hint.isCode ? 
+          <Prism language="tsx">{hint.content}</Prism> : 
+          <div className={classes.card}>{parse(hint.content)}</div>
+      }
     </li>
   )
 
