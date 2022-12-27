@@ -1,13 +1,14 @@
 
-import { Container, Header, Button, Group, Title, Center, createStyles, Text } from "@mantine/core";
-import { IconLogin } from "@tabler/icons";
+import { Container, Header, Button, Group, Title, Center, createStyles, Text, Tooltip } from "@mantine/core";
+import { IconBoxMultiple, IconLogin } from "@tabler/icons";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import Logo from "./Logo";
 
 const MainHeader = () => {
+  const { data: session } = useSession();
+
   return (
-    <Link href={"/"}>
     <Header height="60" >
       <Container py={20}
         style={{
@@ -15,13 +16,31 @@ const MainHeader = () => {
           alignItems: "center",
           justifyContent: "space-between",
         }}>
-        <Logo />
-        <LoginButton />
+
+        <Link href={"/"}>
+          <Logo />
+        </Link>
+
+        <Group>
+          {
+            session &&
+            <Group>
+              <Text variant="gradient" gradient={{ from: 'indigo', to: 'cyan', deg: 45 }} inline > {session.user.name} </Text>
+
+              <Tooltip label="My Collections" position="bottom">
+                <Link href="/collections">
+                  <IconBoxMultiple size={20} />
+                </Link>
+              </Tooltip>
+            </Group>
+          }
+          <LoginButton />
+        </Group>
       </Container>
     </Header>
-    </Link>
   )
 }
+
 const LoginButton: React.FC = () => {
   const { data: sessionData } = useSession();
 

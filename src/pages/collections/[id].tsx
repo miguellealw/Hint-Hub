@@ -1,12 +1,12 @@
 import { Button, Group, SimpleGrid, Title, Tooltip } from "@mantine/core"
 import { IconEdit, IconFilePlus, IconTrash } from "@tabler/icons";
 import { type NextPage } from "next";
-import { InputWithButton as SearchBar } from "./components/InputWithButton";
-import MainLayout from "./components/layouts/MainLayout";
+import { InputWithButton as SearchBar } from "../components/InputWithButton";
+import MainLayout from "../components/layouts/MainLayout";
 import { useRef, useState } from 'react';
-import CreateHintModal from "./components/CreateHintModal";
+import CreateHintModal from "../components/CreateHintModal";
 import { useHotkeys } from "@mantine/hooks";
-import HintCard from "./components/HintCard";
+import HintCard from "../components/HintCard";
 
 
 const testHints = [
@@ -60,7 +60,7 @@ main()
 ]
 
 
-const Hints: NextPage = () => {
+const SingleCollection: NextPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const SearchBarRef = useRef<HTMLInputElement>(null);
   useHotkeys([
@@ -105,4 +105,4 @@ const Hints: NextPage = () => {
 }
 
 
-export default Hints;
+export default SingleCollection;

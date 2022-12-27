@@ -1,10 +1,14 @@
 import { useState } from "react";
-import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text } from "@mantine/core"
+import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader } from "@mantine/core"
 import { IconBoxMultiple, IconDotsVertical, IconFilePlus } from "@tabler/icons";
 import { type NextPage } from "next";
 import MainLayout from "./components/layouts/MainLayout";
 import { InputWithButton as SearchBar } from "./components/InputWithButton";
 import CreateHintModal from "./components/CreateHintModal";
+import CreateCollectionModal from "./components/CreateCollectionModal";
+import { trpc } from "../utils/trpc";
+import { Collection } from "@prisma/client";
+import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
   collectionCard: {
@@ -27,34 +31,30 @@ const useStyles = createStyles((theme) => ({
 }));
 
 
-const collections = [
-  { id: 1, name: "Terminal" },
-  { id: 2, name: "Git" },
-  { id: 3, name: "React" }, 
-  { id: 4, name: "JavaScript" },
-];
-
 const Collections: NextPage = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
+  const [isHintModalOpen, setHintModalOpen] = useState(false);
   const { classes } = useStyles();
+  const { data: collections, isLoading } = trpc.collection.getAll.useQuery();
 
   return (
     <MainLayout containerSize="md">
-      <CreateHintModal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />
+      <CreateCollectionModal isModalOpen={isCollectionModalOpen} setModalOpen={setCollectionModalOpen} />
+      <CreateHintModal isModalOpen={isHintModalOpen} setModalOpen={setHintModalOpen} />
 
       <Group position="apart" align="center" my="xl">
-        <Title align="center">Your Collections</Title>
+        <Title align="center">My Collections</Title>
 
         {/* TODO: show cmd or ctrl depending on OS */}
         {/* <Tooltip label="Create Hint (⌘ + K)"> */}
         <Group>
           <Tooltip label="Create Hint ('C')">
-            <Button variant="subtle" color="indigo.5" leftIcon={<IconFilePlus size={18} />} onClick={() => setModalOpen(true)}>
+            <Button variant="subtle" color="indigo.5" leftIcon={<IconFilePlus size={18} />} onClick={() => setHintModalOpen(true)}>
               Create Hint
             </Button>
           </Tooltip>
           <Tooltip label="Create Collection ('O')">
-            <Button color="indigo.8" leftIcon={<IconBoxMultiple size={18} />} onClick={() => setModalOpen(true)}>
+            <Button color="indigo.8" leftIcon={<IconBoxMultiple size={18} />} onClick={() => setCollectionModalOpen(true)}>
               Create Collection
             </Button>
           </Tooltip>
@@ -64,17 +64,31 @@ const Collections: NextPage = () => {
       <SearchBar mb="xl" />
 
 
-      <ul style={{ paddingLeft: 0 }}>
-        <SimpleGrid cols={3}>
-          {collections.map(collection => (
-            <li key={collection.id} className={classes.collectionCard}>
-              <Text fz="lg" fw={600} c="indigo.9">{collection.name}</Text>
-              <Text fz="xs" c="indigo.4">5 hints</Text>
-            </li>
-          ))}
-        </SimpleGrid>
-      </ul>
+      {isLoading ? <Loader color="indigo" /> : <CollectionsList collections={collections} classes={classes} />}
+
     </MainLayout>
+  )
+}
+
+// TODO: change any to correct type
+const CollectionsList = ({ collections, classes }: { collections: Collection[] | undefined, classes: any }) => {
+
+  return (
+    <ul style={{ paddingLeft: 0 }}>
+      <SimpleGrid cols={3}>
+        {collections?.length === 0 ?
+          <Text align="center" c="indigo.5">You don&apos;t have any collections yet.</Text> :
+          collections?.map(collection => (
+            <Link key={collection.id} href={`/collections/${collection.id}`}>
+              <li className={classes.collectionCard}>
+                <Text fz="lg" fw={600} c="indigo.9">{collection.name}</Text>
+                <Text fz="xs" c="indigo.4">5 hints</Text>
+              </li>
+            </Link>
+          ))
+        }
+      </SimpleGrid>
+    </ul>
   )
 }
 
