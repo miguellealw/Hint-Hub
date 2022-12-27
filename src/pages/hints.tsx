@@ -1,12 +1,9 @@
-import { Button, Container, Grid, Group, Input, Loader, Modal, SimpleGrid, Textarea, TextInput, Title, Tooltip } from "@mantine/core"
-import { Toolbar } from "@mantine/tiptap/lib/Toolbar/Toolbar";
-import { IconFilePlus, IconSearch } from "@tabler/icons";
+import { Button, Group, SimpleGrid, Title, Tooltip } from "@mantine/core"
+import { IconEdit, IconFilePlus, IconTrash } from "@tabler/icons";
 import { type NextPage } from "next";
 import { InputWithButton as SearchBar } from "./components/InputWithButton";
 import MainLayout from "./components/layouts/MainLayout";
-import MainHeader from "./components/MainHeader";
 import { useRef, useState } from 'react';
-import RREditor from "./components/RichTextEditor";
 import CreateHintModal from "./components/CreateHintModal";
 import { useHotkeys } from "@mantine/hooks";
 import HintCard from "./components/HintCard";
@@ -47,7 +44,7 @@ const testHints = [
     id: 6,
     title: "Test Rich Text",
     isCode: false,
-    content: '<h2 style="text-align: left;">Welcome to Mantine rich text editor</h2><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul>'
+    content: '<h2 style="text-align: left;">Welcome to Mantine rich text editor</h2><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul> <pre><code class="language-java">public class HelloWorld {<br>  public static void main(String[] args) {<br>    System.out.println("Hello World");<br>  }<br>}<br></code></pre>'
   },
   {
     id: 7,
@@ -77,7 +74,11 @@ const Hints: NextPage = () => {
       <CreateHintModal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />
 
       <Group position="apart" align="center" my="xl">
-        <Title align="center">Terminal Commands</Title>
+        <Group align="center">
+          <Title align="center">Terminal Commands</Title>
+          <IconEdit size={20} style={{cursor: "pointer"}}/>
+          <IconTrash size={20} style={{cursor: "pointer"}}/>
+        </Group>
 
         {/* TODO: show cmd or ctrl depending on OS */}
         {/* <Tooltip label="Create Hint (⌘ + K)"> */}
@@ -88,13 +89,13 @@ const Hints: NextPage = () => {
         </Tooltip>
       </Group>
 
-      <SearchBar ref={SearchBarRef} mb="xl"/>
+      <SearchBar ref={SearchBarRef} mb="xl" />
 
-      <ul style ={{paddingLeft: 0}}>
+      <ul style={{ paddingLeft: 0 }}>
         <SimpleGrid cols={2} spacing="xl">
           {
             testHints.map(hint => (
-              <HintCard key={hint.id} hint={hint}/>
+              <HintCard key={hint.id} hint={hint} />
             ))
           }
         </SimpleGrid>
