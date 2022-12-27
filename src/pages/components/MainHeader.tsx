@@ -3,7 +3,7 @@ import { Container, Header, Button, Group, Title, Center, createStyles, Text } f
 import { IconLogin } from "@tabler/icons";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import Logo from "../logo";
+import Logo from "./Logo";
 
 const MainHeader = () => {
   return (

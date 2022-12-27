@@ -6,7 +6,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { Container, Header, Button, Title, createStyles, Text } from "@mantine/core";
 import { trpc } from "../utils/trpc";
 import { IconFilePlus, IconLogin } from "@tabler/icons";
-import Logo from "./logo";
+import Logo from "./components/Logo";
 import MainHeader from "./components/MainHeader";
 import MainLayout from "./components/layouts/MainLayout";
 
