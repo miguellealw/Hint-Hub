@@ -25,7 +25,12 @@ export const collectionRouter = router({
 
   create: protectedProcedure
     .input(z.object({ name: z.string() }))
-    .mutation(({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
+      const collection = await ctx.prisma.collection.findFirst({
+        where: { name: input.name, userId: ctx.session.user.id },
+      });
+      if (collection) throw new Error("Collection name already exists");
+
       return ctx.prisma.collection.create({
         data: {
           name: input.name,
@@ -36,7 +41,11 @@ export const collectionRouter = router({
 
   update: protectedProcedure
     .input(z.object({ id: z.string(), name: z.string() }))
-    .mutation(({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
+      // TODO: check if collection exists
+      const collection = await ctx.prisma.collection.findFirst({ where: { name: input.name, }, });
+      if (collection) throw new Error("Collection name already exists");
+
       return ctx.prisma.collection.update({
         where: {
           id: input.id,

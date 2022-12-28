@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader, Box } from "@mantine/core"
+import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader, Box, TextInput } from "@mantine/core"
 import { IconBoxMultiple, IconDotsVertical, IconFilePlus, IconFolderPlus } from "@tabler/icons";
 import { type NextPage } from "next";
 import MainLayout from "./components/layouts/MainLayout";
 import { InputWithButton as SearchBar } from "./components/InputWithButton";
 import CreateHintModal from "./components/CreateHintModal";
-import CreateCollectionModal from "./components/CreateCollectionModal";
+import CreateCollectionModal from "./components/Modals/CollectionModal";
 import { trpc } from "../utils/trpc";
 import { type Collection } from "@prisma/client";
 import Link from "next/link";
+import { showNotification } from "@mantine/notifications";
 
 const useStyles = createStyles((theme) => ({
   collectionCard: {
@@ -34,19 +35,60 @@ const useStyles = createStyles((theme) => ({
 const Collections: NextPage = () => {
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
   const [isHintModalOpen, setHintModalOpen] = useState(false);
+  const [collectionName, setCollectionName] = useState("");
+  const [shouldModalClose, setShouldModalClose] = useState(true);
+
   const { classes } = useStyles();
   const { data: collections, isLoading } = trpc.collection.getAll.useQuery();
+  const mutation = trpc.collection.create.useMutation();
+  const utils = trpc.useContext();
 
   return (
     <MainLayout containerSize="md">
-      <CreateCollectionModal isModalOpen={isCollectionModalOpen} setModalOpen={setCollectionModalOpen} />
+      <CreateCollectionModal
+        isModalOpen={isCollectionModalOpen}
+        setModalOpen={setCollectionModalOpen}
+        name={collectionName}
+        setName={setCollectionName}
+        onConfirm={(e) => {
+          // Check if field is empty
+          if (typeof collectionName === "string" && collectionName.trim() === "") {
+            showNotification({
+              message: "Name field can not be empty",
+              color: "yellow"
+            })
+            return;
+          }
+
+          // TODO: optimistic update
+          mutation.mutate({ name: collectionName }, {
+            onSuccess: () => {
+              setCollectionModalOpen(false);
+              setCollectionName("");
+              showNotification({
+                title: "Collection created",
+                message: "Collection created successfully",
+              })
+
+              utils.collection.getAll.invalidate();
+            },
+            onError: (error) => {
+              showNotification({
+                title: "Error creating collection",
+                message: error.message,
+                color: "red"
+              })
+            }
+          })
+        }}
+        onCancel={(e) => { setCollectionModalOpen(false) }}
+      />
       <CreateHintModal isModalOpen={isHintModalOpen} setModalOpen={setHintModalOpen} />
 
       <Group position="apart" align="center" my="xl">
         <Title align="center">My Collections</Title>
 
         {/* TODO: show cmd or ctrl depending on OS */}
-        {/* <Tooltip label="Create Hint (⌘ + K)"> */}
         <Group>
           <Tooltip label="Create Hint ('C')">
             <Button variant="subtle" color="indigo.5" leftIcon={<IconFilePlus size={18} />} onClick={() => setHintModalOpen(true)}>
@@ -54,7 +96,14 @@ const Collections: NextPage = () => {
             </Button>
           </Tooltip>
           <Tooltip label="Create Collection ('O')">
-            <Button color="indigo.8" leftIcon={<IconFolderPlus size={18} />} onClick={() => setCollectionModalOpen(true)}>
+
+            <Button 
+              color="indigo.8" 
+              leftIcon={<IconFolderPlus size={18} />} 
+              onClick={() => {
+                setCollectionModalOpen(true);
+              }}
+            >
               Create Collection
             </Button>
           </Tooltip>

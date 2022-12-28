@@ -9,10 +9,9 @@ import { useHotkeys } from "@mantine/hooks";
 import HintCard from "../components/HintCard";
 import { trpc } from "../../utils/trpc";
 import { useRouter } from "next/router";
-// import { openConfirmModal } from "../components/ConfirmModal";
-import openModal from "../components/ConfirmModal";
-import { openConfirmModal } from "@mantine/modals";
+import { openDeleteConfirmModal } from "../components/Modals/openConfirmModals";
 import { showNotification } from "@mantine/notifications";
+import CreateCollectionModal from "../components/Modals/CollectionModal";
 
 
 const testHints = [
@@ -67,24 +66,40 @@ main()
 
 
 const SingleCollection: NextPage = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isHintModalOpen, setHintModalOpen] = useState(false);
+  const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
+  const [collectionName, setCollectionName] = useState("")
   const SearchBarRef = useRef<HTMLInputElement>(null);
+
+  // router
   const router = useRouter();
   const currentCollectionId = router.query.id as string;
+
+  // trpc
+  const createMutation = trpc.collection.create.useMutation();
+  const updateMutation = trpc.collection.update.useMutation();
+  const deleteMutation = trpc.collection.delete.useMutation();
+  const {
+    data: currentCollection,
+    isLoading
+  } = trpc.collection.getById.useQuery(
+    { id: currentCollectionId },
+    {
+      onSuccess: (data) => {
+        setCollectionName(data.name);
+      },
+    }
+  );
+
+  const utils = trpc.useContext();
+
   useHotkeys([
-    ["c", () => setModalOpen(true)],
+    ["c", () => setHintModalOpen(true)],
     // FIXME: SearchBarRef is null
     // ["/", () => SearchBarRef.current?.focus()]
   ])
 
-  const {
-    data: currentCollection,
-    isLoading
-  } = trpc.collection.getById.useQuery({
-    id: currentCollectionId
-  });
 
-  const deleteMutation = trpc.collection.delete.useMutation();
 
   return (
     <MainLayout containerSize="md">
@@ -94,7 +109,45 @@ const SingleCollection: NextPage = () => {
         </Box>
       ) : (
         <>
-          <CreateHintModal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />
+          <CreateCollectionModal
+            isModalOpen={isCollectionModalOpen}
+            setModalOpen={setCollectionModalOpen}
+            name={collectionName}
+            setName={setCollectionName}
+            onConfirm={(e) => {
+              // Check if field is empty
+              if (typeof collectionName === "string" && collectionName.trim() === "") {
+                showNotification({
+                  message: "Name field can not be empty",
+                  color: "yellow"
+                })
+                return;
+              }
+
+              // TODO: optimistic update
+              updateMutation.mutate({ id: currentCollectionId, name: collectionName }, {
+                onSuccess: () => {
+                  setCollectionModalOpen(false);
+                  setCollectionName("");
+                  showNotification({
+                    title: "Collection updated",
+                    message: "Collection updated successfully",
+                  })
+
+                  utils.collection.getById.invalidate({id: currentCollectionId});
+                },
+                onError: (error) => {
+                  showNotification({
+                    title: "Error updating collection",
+                    message: error.message,
+                    color: "red"
+                  })
+                }
+              })
+            }}
+            onCancel={(e) => { setCollectionModalOpen(false) }}
+          />
+          <CreateHintModal isModalOpen={isHintModalOpen} setModalOpen={setHintModalOpen} />
 
           <Group position="apart" align="center" my="xl">
             <Group align="center">
@@ -102,7 +155,7 @@ const SingleCollection: NextPage = () => {
 
               <Tooltip label="Edit Collection">
                 <span onClick={() => {
-                  console.log("edit")
+                  setCollectionModalOpen(true);
                 }}>
                   <IconEdit size={20} style={{ cursor: "pointer" }} />
                 </span>
@@ -110,14 +163,33 @@ const SingleCollection: NextPage = () => {
 
               <Tooltip label="Delete Collection">
                 <span onClick={() => {
-                  openModal(() => {
-                    deleteMutation.mutate({ id: currentCollectionId })
-                    router.push(`/collections`)
-                    showNotification({
-                      message: "Collection Deleted",
-                      color: "red"
-                    });
-                  });
+                  openDeleteConfirmModal({
+                    onConfirm: () => {
+                      deleteMutation.mutate(
+                        { id: currentCollectionId },
+                        {
+                          // on mutate success
+                          onSuccess: () => {
+                            router.push(`/collections`)
+                            showNotification({
+                              message: "Collection Deleted",
+                              color: "red"
+                            });
+                          },
+                          onError: (error) => {
+                            showNotification({
+                              message: error.message,
+                              color: "red"
+                            });
+                          },
+                          onSettled: () => {
+                            // refetch collection data
+                            utils.collection.getAll.invalidate();
+                          }
+                        }
+                      );
+                    }
+                  })
                 }}>
                   <IconTrash size={20} style={{ cursor: "pointer" }} />
                 </span>
@@ -127,7 +199,7 @@ const SingleCollection: NextPage = () => {
             {/* TODO: show cmd or ctrl depending on OS */}
             {/* <Tooltip label="Create Hint (⌘ + K)"> */}
             <Tooltip label="Create Hint ('C')">
-              <Button color="indigo.8" leftIcon={<IconFilePlus size={18} />} onClick={() => setModalOpen(true)}>
+              <Button color="indigo.8" leftIcon={<IconFilePlus size={18} />} onClick={() => setHintModalOpen(true)}>
                 Create Hint
               </Button>
             </Tooltip>
