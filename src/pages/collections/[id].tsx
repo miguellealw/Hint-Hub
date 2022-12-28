@@ -1,4 +1,4 @@
-import { Button, Group, Loader, SimpleGrid, Title, Tooltip } from "@mantine/core"
+import { Box, Button, Group, Loader, SimpleGrid, Title, Tooltip } from "@mantine/core"
 import { IconEdit, IconFilePlus, IconTrash } from "@tabler/icons";
 import { type NextPage } from "next";
 import { InputWithButton as SearchBar } from "../components/InputWithButton";
@@ -88,7 +88,11 @@ const SingleCollection: NextPage = () => {
 
   return (
     <MainLayout containerSize="md">
-      {isLoading ? <Loader color="indigo" /> : (
+      {isLoading ? (
+        <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }} mt="xl">
+          <Loader color="indigo" />
+        </Box>
+      ) : (
         <>
           <CreateHintModal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />
 

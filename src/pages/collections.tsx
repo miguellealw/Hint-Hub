@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader } from "@mantine/core"
-import { IconBoxMultiple, IconDotsVertical, IconFilePlus } from "@tabler/icons";
+import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader, Box } from "@mantine/core"
+import { IconBoxMultiple, IconDotsVertical, IconFilePlus, IconFolderPlus } from "@tabler/icons";
 import { type NextPage } from "next";
 import MainLayout from "./components/layouts/MainLayout";
 import { InputWithButton as SearchBar } from "./components/InputWithButton";
@@ -54,7 +54,7 @@ const Collections: NextPage = () => {
             </Button>
           </Tooltip>
           <Tooltip label="Create Collection ('O')">
-            <Button color="indigo.8" leftIcon={<IconBoxMultiple size={18} />} onClick={() => setCollectionModalOpen(true)}>
+            <Button color="indigo.8" leftIcon={<IconFolderPlus size={18} />} onClick={() => setCollectionModalOpen(true)}>
               Create Collection
             </Button>
           </Tooltip>
@@ -64,7 +64,11 @@ const Collections: NextPage = () => {
       <SearchBar mb="xl" />
 
 
-      {isLoading ? <Loader color="indigo" /> : <CollectionsList collections={collections} classes={classes} />}
+      {isLoading ? (
+        <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <Loader color="indigo" />
+        </Box>
+      ) : <CollectionsList collections={collections} classes={classes} />}
 
     </MainLayout>
   )
