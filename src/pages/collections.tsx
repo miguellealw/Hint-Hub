@@ -10,6 +10,7 @@ import { trpc } from "../utils/trpc";
 import { type Collection } from "@prisma/client";
 import Link from "next/link";
 import { showNotification } from "@mantine/notifications";
+import { useHotkeys } from "@mantine/hooks";
 
 const useStyles = createStyles((theme) => ({
   collectionCard: {
@@ -36,9 +37,16 @@ const Collections: NextPage = () => {
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
   const [isHintModalOpen, setHintModalOpen] = useState(false);
   const [collectionName, setCollectionName] = useState("");
-  const [shouldModalClose, setShouldModalClose] = useState(true);
 
   const { classes } = useStyles();
+  useHotkeys([
+    ["c", () => setHintModalOpen(true)],
+    ["o", () => setCollectionModalOpen(true)]
+    // FIXME: SearchBarRef is null
+    // ["/", () => SearchBarRef.current?.focus()]
+  ])
+
+  // trpc
   const { data: collections, isLoading } = trpc.collection.getAll.useQuery();
   const mutation = trpc.collection.create.useMutation();
   const utils = trpc.useContext();
@@ -51,6 +59,7 @@ const Collections: NextPage = () => {
         name={collectionName}
         setName={setCollectionName}
         onConfirm={(e) => {
+          e.preventDefault();
           // Check if field is empty
           if (typeof collectionName === "string" && collectionName.trim() === "") {
             showNotification({

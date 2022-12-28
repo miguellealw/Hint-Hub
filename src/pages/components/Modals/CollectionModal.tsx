@@ -31,18 +31,20 @@ export default function CreateCollectionModal({
       title="Create Collection"
       size="md"
     >
-      <TextInput
-        label="Collection Name"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.currentTarget.value)}
-        data-autofocus
-      />
+      <form onSubmit={onConfirm}>
+        <TextInput
+          label="Collection Name"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.currentTarget.value)}
+          data-autofocus
+        />
 
-      <Group mt="lg">
-        <Button color="indigo.8" onClick={onConfirm}>Create</Button>
-        <Button variant="light" color="indigo.8" onClick={onCancel}>Cancel</Button>
-      </Group>
+        <Group mt="lg">
+          <Button color="indigo.8" type="submit">Create</Button>
+          <Button variant="light" color="indigo.8" onClick={onCancel}>Cancel</Button>
+        </Group>
+      </form>
     </Modal>
   );
 }

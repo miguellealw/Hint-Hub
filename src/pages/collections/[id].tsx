@@ -115,6 +115,7 @@ const SingleCollection: NextPage = () => {
             name={collectionName}
             setName={setCollectionName}
             onConfirm={(e) => {
+              e.preventDefault();
               // Check if field is empty
               if (typeof collectionName === "string" && collectionName.trim() === "") {
                 showNotification({
