@@ -14,9 +14,10 @@ export default function CreateHintModal({ isModalOpen, setModalOpen }: CreateHin
       opened={isModalOpen}
       onClose={() => setModalOpen(false)}
       title="Create Hint"
+      overflow="inside"
       size="xl"
     >
-      <TextInput label="Title" placeholder="Title" />
+      <TextInput label="Title" placeholder="Title" data-autofocus/>
       <CollectionSelect mt="lg" />
       <Switch description="Select 'code' if hint only contains code" labelPosition="left" offLabel="Rich Text" onLabel="Code" size="lg" mt="lg" />
       <RREditor mt="lg" />

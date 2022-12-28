@@ -5,17 +5,18 @@ import { trpc } from '../../utils/trpc';
 export function CreatableSelect(props: any) {
   const [data, setData] = useState<SelectItem[] | []>([]);
 
-  const { data: collections, isSuccess: isGetSuccess } = trpc.collection.getAll.useQuery(undefined, {
-    onSuccess(collections) {
-      const res: SelectItem[] = [];
+  const { data: collections, isSuccess: isGetSuccess } = trpc.collection.getAll.useQuery(
+    undefined,
+    {
+      onSuccess(collections) {
+        const dat = collections.map(coll => {
+          return { value: coll.name, label: coll.name }
+        })
 
-      const dat = collections.map(coll => {
-        return { value: coll.name, label: coll.name }
-      })
-
-      setData(dat)
-    },
-  });
+        setData(dat)
+      },
+    }
+  );
   const { mutate, isLoading } = trpc.collection.create.useMutation();
 
   if (isGetSuccess) {
@@ -33,8 +34,8 @@ export function CreatableSelect(props: any) {
       getCreateLabel={(query) => `+ Create ${query}`}
       onCreate={(query) => {
         const item = { value: query, label: query };
-        mutate({ name: query }, { 
-          onSuccess: () => setData((current) => [...current, item]) 
+        mutate({ name: query }, {
+          onSuccess: () => setData((current) => [...current, item])
         });
         return item;
       }}
