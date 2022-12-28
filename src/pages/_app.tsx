@@ -10,19 +10,17 @@ import Head from "next/head";
 import { ModalsProvider } from "@mantine/modals";
 import { NotificationsProvider } from "@mantine/notifications";
 import { SpotlightAction, SpotlightProvider } from "@mantine/spotlight";
-import { IconBoxMultiple, IconDashboard, IconFileText, IconHome, IconSearch } from "@tabler/icons";
+import { IconBoxMultiple, IconDashboard, IconFilePlus, IconFileText, IconFolderPlus, IconHome, IconListSearch, IconReportSearch, IconSearch } from "@tabler/icons";
 
 const actions: SpotlightAction[] = [
   {
     title: 'Go to Collections',
-    description: 'Get to collections page',
     onTrigger: () => console.log('Collections'),
     icon: <IconBoxMultiple size={18} />,
     group: "General"
   },
   {
     title: 'Documentation',
-    description: 'Visit documentation to lean more about all features',
     onTrigger: () => console.log('Documentation'),
     icon: <IconFileText size={18} />,
     group: "General"
@@ -30,25 +28,25 @@ const actions: SpotlightAction[] = [
   {
     title: 'Search Collection',
     onTrigger: () => console.log('Documentation'),
-    icon: <IconFileText size={18} />,
+    icon: <IconReportSearch size={18} />,
     group: "Collections"
   },
   {
     title: 'Create Collection',
     onTrigger: () => console.log('Documentation'),
-    icon: <IconFileText size={18} />,
+    icon: <IconFolderPlus size={18} />,
     group: "Collections"
   },
   {
     title: 'Search Hints',
     onTrigger: () => console.log('Documentation'),
-    icon: <IconFileText size={18} />,
+    icon: <IconListSearch size={18} />,
     group: "Hints"
   },
   {
     title: 'Create Hints',
     onTrigger: () => console.log('Documentation'),
-    icon: <IconFileText size={18} />,
+    icon: <IconFilePlus size={18} />,
     group: "Hints"
   },
 
