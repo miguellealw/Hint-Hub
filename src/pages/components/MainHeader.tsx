@@ -27,7 +27,7 @@ const MainHeader = () => {
           {
             session &&
             <Group>
-              <Text variant="gradient" gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}> {session.user.name} </Text>
+              <Text variant="gradient" gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}> {session.user?.name} </Text>
 
               <Tooltip label="My Collections" position="bottom">
                 <Link href="/collections">
@@ -37,7 +37,8 @@ const MainHeader = () => {
                 </Link>
               </Tooltip>
 
-              <Tooltip label="Command Palette" position="bottom">
+              {/* TODO: change command icon on windows */}
+              <Tooltip label="Command Palette (⌘ + K)" position="bottom">
                 <Box onClick={() => spotlight.openSpotlight()} style={{cursor: "pointer"}}>
                   <IconCommand size={20} />
                 </Box>
