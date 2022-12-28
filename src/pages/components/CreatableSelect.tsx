@@ -1,11 +1,25 @@
 import { useState } from 'react';
-import { Select } from '@mantine/core';
+import { Select, type SelectItem } from '@mantine/core';
+import { trpc } from '../../utils/trpc';
 
 export function CreatableSelect(props: any) {
-  const [data, setData] = useState([
-    { value: 'react', label: 'React' },
-    { value: 'ng', label: 'Angular' },
-  ]);
+  const [data, setData] = useState<SelectItem[] | []>([]);
+
+  const { data: collections, isSuccess: isGetSuccess } = trpc.collection.getAll.useQuery(undefined, {
+    onSuccess(collections) {
+      const res: SelectItem[] = [];
+
+      const dat = collections.map(coll => {
+        return { value: coll.name, label: coll.name }
+      })
+
+      setData(dat)
+    },
+  });
+  const { mutate, isLoading } = trpc.collection.create.useMutation();
+
+  if (isGetSuccess) {
+  }
 
   return (
     <Select
@@ -15,10 +29,13 @@ export function CreatableSelect(props: any) {
       nothingFound="Nothing found"
       searchable
       creatable
+      disabled={isLoading}
       getCreateLabel={(query) => `+ Create ${query}`}
       onCreate={(query) => {
         const item = { value: query, label: query };
-        setData((current) => [...current, item]);
+        mutate({ name: query }, { 
+          onSuccess: () => setData((current) => [...current, item]) 
+        });
         return item;
       }}
       {...props}
