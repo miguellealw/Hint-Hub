@@ -7,7 +7,7 @@ import { InputWithButton as SearchBar } from "./components/InputWithButton";
 import CreateHintModal from "./components/CreateHintModal";
 import CreateCollectionModal from "./components/CreateCollectionModal";
 import { trpc } from "../utils/trpc";
-import { Collection } from "@prisma/client";
+import { type Collection } from "@prisma/client";
 import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
