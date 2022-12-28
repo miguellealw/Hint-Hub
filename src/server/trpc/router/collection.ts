@@ -32,5 +32,42 @@ export const collectionRouter = router({
           userId: ctx.session.user.id,
         },
       });
+    }),
+
+  update: protectedProcedure
+    .input(z.object({ id: z.string(), name: z.string() }))
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.collection.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+        },
+      });
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const collection = await ctx.prisma.collection.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!collection) {
+        throw new Error("Collection not found");
+      }
+
+      // if (collection.userId !== ctx.session.user.id) {
+      //   throw new Error("Not authorized");
+      // }
+
+      return ctx.prisma.collection.delete({
+        where: {
+          id: input.id,
+        },
+      });
     })
+
+
 });
