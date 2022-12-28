@@ -17,6 +17,7 @@
     "@mantine/hooks": "^5.9.5",
     "@mantine/modals": "^5.9.5",
     "@mantine/next": "^5.9.5",
+    "@mantine/notifications": "^5.9.5",
     "@mantine/prism": "^5.9.5",
     "@mantine/spotlight": "^5.9.5",
     "@mantine/tiptap": "^5.9.5",

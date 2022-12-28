@@ -7,6 +7,8 @@ import { trpc } from "../utils/trpc";
 
 import "../styles/globals.css";
 import Head from "next/head";
+import { ModalsProvider } from "@mantine/modals";
+import { NotificationsProvider } from "@mantine/notifications";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -28,9 +30,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
           // colorScheme: "dark",
         }}
       >
-        <SessionProvider session={session}>
-          <Component {...pageProps} />
-        </SessionProvider>
+        <ModalsProvider>
+          <SessionProvider session={session}>
+            <NotificationsProvider>
+              <Component {...pageProps} />
+            </NotificationsProvider>
+          </SessionProvider>
+        </ModalsProvider>
       </MantineProvider>
     </>
   );

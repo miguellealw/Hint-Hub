@@ -9,6 +9,10 @@ import { useHotkeys } from "@mantine/hooks";
 import HintCard from "../components/HintCard";
 import { trpc } from "../../utils/trpc";
 import { useRouter } from "next/router";
+// import { openConfirmModal } from "../components/ConfirmModal";
+import openModal from "../components/ConfirmModal";
+import { openConfirmModal } from "@mantine/modals";
+import { showNotification } from "@mantine/notifications";
 
 
 const testHints = [
@@ -65,28 +69,55 @@ main()
 const SingleCollection: NextPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const SearchBarRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const currentCollectionId = router.query.id as string;
   useHotkeys([
     ["c", () => setModalOpen(true)],
     // FIXME: SearchBarRef is null
     // ["/", () => SearchBarRef.current?.focus()]
   ])
-  const router = useRouter();
 
-  console.log(router.query.id);
-  const { data: currentCollection, isFetching, isLoading } = trpc.collection.getById.useQuery({ id: router.query.id as string });
+  const {
+    data: currentCollection,
+    isLoading
+  } = trpc.collection.getById.useQuery({
+    id: currentCollectionId
+  });
+
+  const deleteMutation = trpc.collection.delete.useMutation();
 
   return (
     <MainLayout containerSize="md">
-      {isLoading ? <Loader color="indigo"/> : (
+      {isLoading ? <Loader color="indigo" /> : (
         <>
           <CreateHintModal isModalOpen={isModalOpen} setModalOpen={setModalOpen} />
 
           <Group position="apart" align="center" my="xl">
             <Group align="center">
-              {/* <Title align="center">Terminal Commands</Title> */}
               <Title align="center">{currentCollection?.name}</Title>
-              <IconEdit size={20} style={{ cursor: "pointer" }} />
-              <IconTrash size={20} style={{ cursor: "pointer" }} />
+
+              <Tooltip label="Edit Collection">
+                <span onClick={() => {
+                  console.log("edit")
+                }}>
+                  <IconEdit size={20} style={{ cursor: "pointer" }} />
+                </span>
+              </Tooltip>
+
+              <Tooltip label="Delete Collection">
+                <span onClick={() => {
+                  openModal(() => {
+                    deleteMutation.mutate({ id: currentCollectionId })
+                    router.push(`/collections`)
+                    showNotification({
+                      message: "Collection Deleted",
+                      color: "red"
+                    });
+                  });
+                }}>
+                  <IconTrash size={20} style={{ cursor: "pointer" }} />
+                </span>
+              </Tooltip>
             </Group>
 
             {/* TODO: show cmd or ctrl depending on OS */}
@@ -98,7 +129,8 @@ const SingleCollection: NextPage = () => {
             </Tooltip>
           </Group>
 
-          <SearchBar ref={SearchBarRef} mb="xl" />
+          {/* <SearchBar ref={SearchBarRef} mb="xl" /> */}
+          <SearchBar mb="xl" />
 
           <ul style={{ paddingLeft: 0 }}>
             <SimpleGrid cols={2} spacing="xl">

@@ -23,8 +23,8 @@ export default function CreateCollectionModal({ isModalOpen, setModalOpen }: Cre
       <TextInput label="Collection Name" placeholder="Name" onChange={(e) => setName(e.currentTarget.value)} />
       <Group mt="lg">
         <Button color="indigo.8" onClick={() => {
-          //TODO: create collection
           mutation.mutate({ name });
+          setModalOpen(false);
         }}>Create</Button>
         <Button variant="light" color="indigo.8">Cancel</Button>
       </Group>
