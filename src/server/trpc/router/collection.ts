@@ -1,11 +1,7 @@
-import { contextProps } from "@trpc/react-query/dist/internals/context";
 import { z } from "zod";
-import restricted from "../../../pages/api/restricted";
-
-import { router, publicProcedure, protectedProcedure } from "../trpc";
+import { router, protectedProcedure } from "../trpc";
 
 export const collectionRouter = router({
-  // TODO: make private procedure
   getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input, ctx }) => {
