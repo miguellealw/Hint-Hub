@@ -233,14 +233,28 @@ const SingleCollection: NextPage = () => {
           {/* <SearchBar ref={SearchBarRef} mb="xl" /> */}
           <SearchBar mb="xl" />
 
-          {hints.length === 0 ? 
+          {hints.length === 0 ?
             (<Text fz="sm" c="gray.6">No hints in this collection.</Text>) :
             (
               <ul style={{ paddingLeft: 0 }}>
                 <SimpleGrid cols={2} spacing="xl">
                   {
                     hints.map(hint => (
-                      <HintCard key={hint.id} hint={hint} />
+                      <HintCard
+                        key={hint.id}
+                        hint={hint}
+                        onDelete={() => {
+                          deleteHintMutation.mutate({ id: hint.id }, {
+                            onSuccess: () => { 
+                              showNotification({ message: "Hint deleted", color: "red" }) 
+                              utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId });
+                            },
+                            onError: (error) => { 
+                              showNotification({ message: error.message, color: "red" }) 
+                            }
+                          })
+                        }}
+                      />
                     ))
                   }
                 </SimpleGrid>

@@ -7,9 +7,10 @@ type HintCardMenuProps = {
     card: string;
     iconEdit: string;
   }
+  onDelete: () => void;
 }
 
-export default function HintCardMenu({ classes }: HintCardMenuProps) {
+export default function HintCardMenu({ classes, onDelete }: HintCardMenuProps) {
   return (
     <Menu shadow="md" width={200} position="bottom-end">
       <Menu.Target>
@@ -28,7 +29,7 @@ export default function HintCardMenu({ classes }: HintCardMenuProps) {
 
 
         <Menu.Divider />
-        <Menu.Item color="red" icon={<IconTrash size={14} />}>Delete hint</Menu.Item>
+        <Menu.Item color="red" icon={<IconTrash size={14} />} onClick={(e) => onDelete()}>Delete hint</Menu.Item>
       </Menu.Dropdown>
     </Menu>
   );

@@ -74,11 +74,6 @@ export const hintRouter = router({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const collection = await ctx.prisma.collection.findUnique({ where: { id: input.id }, });
-      if (!collection) {
-        throw new Error("Collection not found");
-      }
-
       return ctx.prisma.hint.delete({
         where: {
           id: input.id,
