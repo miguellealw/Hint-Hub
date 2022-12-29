@@ -1,4 +1,4 @@
-import { Box, Button, Group, Loader, SimpleGrid, Title, Tooltip } from "@mantine/core"
+import { Box, Button, Group, Loader, SimpleGrid, Title, Tooltip, Text } from "@mantine/core"
 import { IconEdit, IconFilePlus, IconTrash } from "@tabler/icons";
 import { type NextPage } from "next";
 import { InputWithButton as SearchBar } from "../components/InputWithButton";
@@ -12,73 +12,28 @@ import { useRouter } from "next/router";
 import { openDeleteConfirmModal } from "../components/Modals/openConfirmModals";
 import { showNotification } from "@mantine/notifications";
 import CreateCollectionModal from "../components/Modals/CollectionModal";
-
-
-const testHints = [
-  {
-    id: 1,
-    title: "How to create a new file in terminal",
-    isCode: false,
-    content: "To create a new file in terminal, use the touch command. For example, to create a new file called index.html, you would type <code>touch index.html</code>."
-  },
-  {
-    id: 2,
-    title: "How to create a new folder in terminal",
-    isCode: false,
-    content: "To create a new folder in terminal, use the mkdir command. For example, to create a new folder called images, you would type mkdir images."
-  },
-  {
-    id: 3,
-    title: "How to delete a file in terminal",
-    isCode: false,
-    content: "To delete a file in terminal, use the rm command. For example, to delete a file called index.html, you would type rm index.html."
-  },
-  {
-    id: 4,
-    title: "How to delete a folder in terminal",
-    isCode: false,
-    content: "To delete a folder in terminal, use the rm -r command. For example, to delete a folder called images, you would type rm -r images."
-  },
-  {
-    id: 5,
-    title: "How to move a file in terminal",
-    isCode: false,
-    content: "To move a file in terminal, use the mv command. For example, to move a file called index.html to a folder called images, you would type mv index.html images."
-  },
-  {
-    id: 6,
-    title: "Test Rich Text",
-    isCode: false,
-    content: '<h2 style="text-align: left;">Welcome to Mantine rich text editor</h2><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul> <pre><code class="language-java">public class HelloWorld {<br>  public static void main(String[] args) {<br>    System.out.println("Hello World");<br>  }<br>}<br></code></pre>'
-  },
-  {
-    id: 7,
-    title: "Hello World in Python",
-    isCode: true,
-    content: `
-def main():
-  print("Hello World") 
-
-main()
-    `
-  }
-]
-
+import isStringEmpty from "../../utils/isStringEmpty";
 
 const SingleCollection: NextPage = () => {
   const [isHintModalOpen, setHintModalOpen] = useState(false);
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
-  const [collectionName, setCollectionName] = useState("")
   const SearchBarRef = useRef<HTMLInputElement>(null);
+
+  // const [hints, setHints] = useState([]); 
+
+  // New hint state
+  const [hintTitle, setHintTitle] = useState("");
+  const [hintCollection, setHintCollection] = useState("");
+  const [hintContent, setHintContent] = useState("");
 
   // router
   const router = useRouter();
   const currentCollectionId = router.query.id as string;
 
   // trpc
-  const createMutation = trpc.collection.create.useMutation();
-  const updateMutation = trpc.collection.update.useMutation();
-  const deleteMutation = trpc.collection.delete.useMutation();
+  const createCollectionMutation = trpc.collection.create.useMutation();
+  const updateCollectionMutation = trpc.collection.update.useMutation();
+  const deleteCollectionMutation = trpc.collection.delete.useMutation();
   const {
     data: currentCollection,
     isLoading
@@ -86,7 +41,22 @@ const SingleCollection: NextPage = () => {
     { id: currentCollectionId },
     {
       onSuccess: (data) => {
-        setCollectionName(data.name);
+        setHintCollection(data.name);
+      },
+    }
+  );
+
+  const createHintMutation = trpc.hint.create.useMutation();
+  const updateHintMutation = trpc.hint.update.useMutation();
+  const deleteHintMutation = trpc.hint.delete.useMutation();
+  const {
+    data: hints,
+    isLoading: isHintsLoading
+  } = trpc.hint.getAllByCollectionId.useQuery(
+    { collectionId: currentCollectionId },
+    {
+      onSuccess: (data) => {
+        // setHints(data);
       },
     }
   );
@@ -112,12 +82,12 @@ const SingleCollection: NextPage = () => {
           <CreateCollectionModal
             isModalOpen={isCollectionModalOpen}
             setModalOpen={setCollectionModalOpen}
-            name={collectionName}
-            setName={setCollectionName}
+            name={hintCollection}
+            setName={setHintCollection}
             onConfirm={(e) => {
               e.preventDefault();
               // Check if field is empty
-              if (typeof collectionName === "string" && collectionName.trim() === "") {
+              if (isStringEmpty(hintCollection)) {
                 showNotification({
                   message: "Name field can not be empty",
                   color: "yellow"
@@ -126,16 +96,16 @@ const SingleCollection: NextPage = () => {
               }
 
               // TODO: optimistic update
-              updateMutation.mutate({ id: currentCollectionId, name: collectionName }, {
+              updateCollectionMutation.mutate({ id: currentCollectionId, name: hintCollection }, {
                 onSuccess: () => {
                   setCollectionModalOpen(false);
-                  setCollectionName("");
+                  setHintCollection("");
                   showNotification({
                     title: "Collection updated",
                     message: "Collection updated successfully",
                   })
 
-                  utils.collection.getById.invalidate({id: currentCollectionId});
+                  utils.collection.getById.invalidate({ id: currentCollectionId });
                 },
                 onError: (error) => {
                   showNotification({
@@ -148,7 +118,61 @@ const SingleCollection: NextPage = () => {
             }}
             onCancel={(e) => { setCollectionModalOpen(false) }}
           />
-          <CreateHintModal isModalOpen={isHintModalOpen} setModalOpen={setHintModalOpen} />
+          <CreateHintModal
+            isModalOpen={isHintModalOpen}
+            setModalOpen={setHintModalOpen}
+            hintTitle={hintTitle}
+            setHintTitle={setHintTitle}
+            hintCollection={hintCollection}
+            setHintCollection={setHintCollection}
+            hintContent={hintContent}
+            setHintContent={setHintContent}
+            onConfirm={(e) => {
+              e.preventDefault();
+              // Check if fields are empty
+              console.log("hintTitle", hintTitle)
+              console.log("hintContent", hintContent)
+              if (isStringEmpty(hintTitle) || isStringEmpty(hintContent)) {
+                showNotification({
+                  message: "Fields can not be empty",
+                  color: "yellow"
+                })
+                return;
+              }
+
+
+              // TODO: optimistic update
+              createHintMutation.mutate({
+                title: hintTitle,
+                collectionId: currentCollection.id,
+                content: hintContent
+              }, {
+                onSuccess: () => {
+                  setHintModalOpen(false);
+
+                  // TODO: use form functions from mantine to clear form
+                  setHintTitle("");
+                  setHintCollection("");
+                  setHintContent("");
+
+                  showNotification({
+                    title: "Hint created",
+                    message: "Hint created successfully",
+                  })
+
+                  utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId });
+                },
+                onError: (error) => {
+                  showNotification({
+                    title: "Error creating hint",
+                    message: error.message,
+                    color: "red"
+                  })
+                }
+              })
+            }}
+            onCancel={() => { setHintModalOpen(false); }}
+          />
 
           <Group position="apart" align="center" my="xl">
             <Group align="center">
@@ -166,7 +190,7 @@ const SingleCollection: NextPage = () => {
                 <span onClick={() => {
                   openDeleteConfirmModal({
                     onConfirm: () => {
-                      deleteMutation.mutate(
+                      deleteCollectionMutation.mutate(
                         { id: currentCollectionId },
                         {
                           // on mutate success
@@ -209,15 +233,20 @@ const SingleCollection: NextPage = () => {
           {/* <SearchBar ref={SearchBarRef} mb="xl" /> */}
           <SearchBar mb="xl" />
 
-          <ul style={{ paddingLeft: 0 }}>
-            <SimpleGrid cols={2} spacing="xl">
-              {
-                testHints.map(hint => (
-                  <HintCard key={hint.id} hint={hint} />
-                ))
-              }
-            </SimpleGrid>
-          </ul>
+          {hints.length === 0 ? 
+            (<Text fz="sm" c="gray.6">No hints in this collection.</Text>) :
+            (
+              <ul style={{ paddingLeft: 0 }}>
+                <SimpleGrid cols={2} spacing="xl">
+                  {
+                    hints.map(hint => (
+                      <HintCard key={hint.id} hint={hint} />
+                    ))
+                  }
+                </SimpleGrid>
+              </ul>
+            )}
+
         </>
       )}
     </MainLayout>

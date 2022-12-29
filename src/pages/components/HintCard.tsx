@@ -1,14 +1,16 @@
 import { createStyles, Group, Title, TypographyStylesProvider } from "@mantine/core";
 import HintCardMenu from "./HintCardMenu";
 import { Prism } from "@mantine/prism";
+import { Hint } from "@prisma/client";
 
 type HintCardProps = {
-  hint: {
-    id: number;
-    title: string;
-    isCode: boolean;
-    content: string;
-  }
+  hint: Hint;
+  // hint: {
+  //   id: number;
+  //   title: string;
+  //   isCode: boolean;
+  //   content: string;
+  // }
 }
 
 const useStyles = createStyles(theme => ({
@@ -41,16 +43,19 @@ export default function HintCard({ hint, ...props }: HintCardProps) {
       </Group>
       {/* must be 'div' instead of 'p', or it will give hydration error */}
 
-      {
+      <TypographyStylesProvider className={classes.card}>
+        <div dangerouslySetInnerHTML={{ __html: hint.content }} />
+      </TypographyStylesProvider>
+      {/* {
         hint.isCode ?
           <Prism language="tsx">{hint.content}</Prism> :
           <TypographyStylesProvider className={classes.card}>
             <div dangerouslySetInnerHTML={{ __html: hint.content }} />
           </TypographyStylesProvider>
-      }
+      } */}
     </li>
 
-    
+
   )
 
 }
