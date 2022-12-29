@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader, Box, TextInput } from "@mantine/core"
-import { IconBoxMultiple, IconDotsVertical, IconFilePlus, IconFolderPlus } from "@tabler/icons";
+import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader, Box } from "@mantine/core"
+import { IconFilePlus, IconFolderPlus } from "@tabler/icons";
 import { type NextPage } from "next";
 import MainLayout from "./components/layouts/MainLayout";
 import { InputWithButton as SearchBar } from "./components/InputWithButton";
@@ -92,7 +92,11 @@ const Collections: NextPage = () => {
         }}
         onCancel={(e) => { setCollectionModalOpen(false) }}
       />
-      <CreateHintModal isModalOpen={isHintModalOpen} setModalOpen={setHintModalOpen} />
+      {/* <CreateHintModal 
+        isModalOpen={isHintModalOpen} setModalOpen={setHintModalOpen} 
+        onConfirm = {(e) => {}}
+        onCancel = {() => { setHintModalOpen(false); }}
+      /> */}
 
       <Group position="apart" align="center" my="xl">
         <Title align="center">My Collections</Title>
