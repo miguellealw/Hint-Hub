@@ -51,38 +51,22 @@ const SingleCollection: NextPage = () => {
   const currentCollectionId = router.query.id as string;
 
   // trpc
-  // const createCollectionMutation = trpc.collection.create.useMutation();
   const updateCollectionMutation = trpc.collection.update.useMutation();
   const deleteCollectionMutation = trpc.collection.delete.useMutation();
   const {
     data: currentCollection,
     isLoading: isCurrentCollectionLoading,
     isError: isCurrentCollectionError,
-  } = trpc.collection.getById.useQuery(
-    { id: currentCollectionId },
-    {
-      onSuccess: (data) => {
-        // setCurrentCollection(data);
-        setHintCollection(data.name);
-      },
-    }
-  );
+    isSuccess: isCurrentCollectionSuccess
+  } = trpc.collection.getById.useQuery({ id: currentCollectionId });
 
   const createHintMutation = trpc.hint.create.useMutation();
-  const updateHintMutation = trpc.hint.update.useMutation();
+  // const updateHintMutation = trpc.hint.update.useMutation();
   const deleteHintMutation = trpc.hint.delete.useMutation();
   const {
     data: hints,
-    // isLoading: isHintsLoading,
     isError: isHintsError,
-  } = trpc.hint.getAllByCollectionId.useQuery(
-    { collectionId: currentCollectionId },
-    // {
-    //   onSuccess: (data) => {
-    //     // setHints(data);
-    //   },
-    // }
-  );
+  } = trpc.hint.getAllByCollectionId.useQuery({ collectionId: currentCollectionId });
 
   const utils = trpc.useContext();
 
@@ -93,13 +77,13 @@ const SingleCollection: NextPage = () => {
   ])
 
   if (isHintsError || isCurrentCollectionError) {
-    <div>Error loading hints or collection</div>
+    return <div>Error loading hints or collection</div>
   }
 
 
   return (
     <MainLayout containerSize="md">
-      {isCurrentCollectionLoading ? (
+      {!isCurrentCollectionSuccess && isCurrentCollectionLoading ? (
         <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }} mt="xl">
           <Loader color="indigo" />
         </Box>
@@ -184,15 +168,15 @@ const SingleCollection: NextPage = () => {
                 }
               })
             }, handleCreateHintError)}
-            onCancel={() => { 
+            onCancel={() => {
               form.reset();
-              setHintModalOpen(false); 
+              setHintModalOpen(false);
             }}
           />
 
           <Group position="apart" align="center" my="xl">
             <Group align="center">
-              <Title align="center">{currentCollection?.name}</Title>
+              <Title align="center">{currentCollection.name}</Title>
 
               <Tooltip label="Edit Collection">
                 <span onClick={() => { setCollectionModalOpen(true) }}>
