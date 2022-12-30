@@ -1,9 +1,8 @@
-import { type MouseEventHandler, type FormEventHandler, type FormEvent } from 'react';
+import { type MouseEventHandler, type FormEvent } from 'react';
 import { Modal, Button, Group, TextInput, Tooltip } from '@mantine/core';
 import Editor from './RichTextEditor';
-import { CreatableSelect as CollectionSelect } from './CreatableSelect';
-import { useForm, type UseFormReturnType } from '@mantine/form';
-import isStringEmpty from '../../utils/isStringEmpty';
+import { type UseFormReturnType } from '@mantine/form';
+// import { CreatableSelect as CollectionSelect } from './CreatableSelect';
 
 type CreateHintFormValues = {
   title: string;

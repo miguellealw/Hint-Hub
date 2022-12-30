@@ -184,7 +184,10 @@ const SingleCollection: NextPage = () => {
                 }
               })
             }, handleCreateHintError)}
-            onCancel={() => { setHintModalOpen(false); }}
+            onCancel={() => { 
+              form.reset();
+              setHintModalOpen(false); 
+            }}
           />
 
           <Group position="apart" align="center" my="xl">
