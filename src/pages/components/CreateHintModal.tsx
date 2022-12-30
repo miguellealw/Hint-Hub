@@ -1,55 +1,88 @@
-import { type MouseEventHandler, type FormEventHandler, type KeyboardEventHandler } from 'react';
-import { Modal, Button, Group, TextInput, Switch, Tooltip } from '@mantine/core';
+import { type MouseEventHandler, type FormEventHandler, type FormEvent } from 'react';
+import { Modal, Button, Group, TextInput, Tooltip } from '@mantine/core';
 import Editor from './RichTextEditor';
 import { CreatableSelect as CollectionSelect } from './CreatableSelect';
-import { getHotkeyHandler } from '@mantine/hooks';
+import { useForm, type UseFormReturnType } from '@mantine/form';
+import isStringEmpty from '../../utils/isStringEmpty';
+
+type CreateHintFormValues = {
+  title: string;
+  // collection: string;
+  content: string;
+}
 
 type CreateHintModalProps = {
   isModalOpen: boolean;
   setModalOpen: (value: boolean) => void;
 
   hintTitle: string;
-  setHintTitle: (value: string) => void;
+  // setHintTitle: (value: string) => void;
 
-  hintCollection: string;
-  setHintCollection: (value: string) => void;
+  // hintCollection: string;
+  // setHintCollection: (value: string) => void;
 
   hintContent: string;
-  setHintContent: (value: string) => void;
+  // setHintContent: (value: string) => void;
 
-  onConfirm: FormEventHandler<HTMLFormElement>;
+  handleTitleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  // handleCollectionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  // handleCollectionChange: (value: string | null) => void;
+  // handleCollectionChange: (value: string | null, id: string | null) => void;
+  handleContentChange: (value: string) => void;
+
+  // onConfirm: (e: FormEvent<HTMLFormElement>, formValues: FormValues) => void;
+  // onConfirm: (e: FormEvent<HTMLFormElement>, form: UseFormReturnType<CreateHintFormValues>) => void;
+  onConfirm: (e: FormEvent<HTMLFormElement>) => void;
   onCancel: MouseEventHandler<HTMLButtonElement>;
+  form: UseFormReturnType<CreateHintFormValues>,
 }
 
 export default function CreateHintModal({
   isModalOpen, setModalOpen,
-  onConfirm, onCancel,
-  hintTitle, setHintTitle,
-  hintCollection, setHintCollection,
-  hintContent, setHintContent
+  handleTitleChange,
+  handleContentChange,
+  // handleCollectionChange,
+  onConfirm, 
+  onCancel,
+  hintTitle,
+  // hintCollection,
+  // setHintCollection,
+  hintContent,
+  form
 }: CreateHintModalProps) {
   return (
     <Modal
       opened={isModalOpen}
-      onClose={() => setModalOpen(false)}
+      onClose={() => {
+        setModalOpen(false)
+        form.reset();
+      }}
       title="Create Hint"
       overflow="inside"
       size="xl"
     >
       <form onSubmit={onConfirm}>
-        <TextInput label="Title" placeholder="Title" value={hintTitle} onChange={(e) => setHintTitle(e.currentTarget.value)} data-autofocus />
-        <CollectionSelect
+        <TextInput label="Title" placeholder="Title" data-autofocus
+          value={hintTitle}
+          onChange={handleTitleChange}
+          {...form.getInputProps('title')}
+        />
+        {/* <CollectionSelect
           mt="md"
           description="To create a new collection just type its name"
           value={hintCollection}
-          onChange={(e) => setHintCollection(e.currentTarget.value)}
-        />
+          onChange={(name, id) => handleCollectionChange(name, id)}
+          {...form.getInputProps('collection')}
+        /> */}
         <Editor
           mt="lg"
-          value={hintContent} onContentUpdate={setHintContent}
-          // onKeydown={(e) => getHotkeyHandler([
-          //   ['mod+shift+Enter', onConfirm]
-          // ])}
+          value={hintContent}
+          onContentUpdate={handleContentChange}
+          form={form}
+          // {...form.getInputProps('content')}
+        // onKeydown={(e) => getHotkeyHandler([
+        //   ['mod+shift+Enter', onConfirm]
+        // ])}
         />
 
         <Group mt="lg">

@@ -1,8 +1,5 @@
-import { type SyntheticEvent, useState } from 'react';
-import { Modal, Button, Group, TextInput, Switch, Title } from '@mantine/core';
-import RREditor from '../RichTextEditor';
-import { CreatableSelect as CollectionSelect } from '../CreatableSelect';
-import { trpc } from '../../../utils/trpc';
+import { type SyntheticEvent } from 'react';
+import { Modal, Button, Group, TextInput } from '@mantine/core';
 
 type CreateHintModalProps = {
   isModalOpen: boolean;

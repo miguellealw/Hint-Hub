@@ -1,4 +1,4 @@
-import { TextInput, TextInputProps, ActionIcon, useMantineTheme } from '@mantine/core';
+import { TextInput, type TextInputProps, ActionIcon, useMantineTheme } from '@mantine/core';
 import { IconSearch, IconArrowRight, IconArrowLeft } from '@tabler/icons';
 
 type InputWithButtonProps = TextInputProps & {

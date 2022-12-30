@@ -1,13 +1,12 @@
-import { contextProps } from "@trpc/react-query/dist/internals/context";
 import { z } from "zod";
 
-import { router, publicProcedure, protectedProcedure } from "../trpc";
+import { router, protectedProcedure } from "../trpc";
 
 export const hintRouter = router({
   getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input, ctx }) => {
-      return ctx.prisma.hint.findUnique({
+      return ctx.prisma.hint.findUniqueOrThrow({
         where: {
           id: input.id,
         },

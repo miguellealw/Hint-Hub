@@ -5,7 +5,7 @@ export const collectionRouter = router({
   getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input, ctx }) => {
-      return ctx.prisma.collection.findUnique({
+      return ctx.prisma.collection.findUniqueOrThrow({
         where: {
           id: input.id,
         },

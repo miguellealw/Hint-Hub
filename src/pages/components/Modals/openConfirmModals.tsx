@@ -1,6 +1,5 @@
-import { Text, TextInput } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
-import { type ConfirmModalProps } from '@mantine/modals/lib/ConfirmModal';
 import { type OpenConfirmModal } from '@mantine/modals/lib/context';
 
 

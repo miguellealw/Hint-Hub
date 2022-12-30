@@ -3,7 +3,7 @@ import { IconEdit, IconFilePlus, IconTrash } from "@tabler/icons";
 import { type NextPage } from "next";
 import { InputWithButton as SearchBar } from "../components/InputWithButton";
 import MainLayout from "../components/layouts/MainLayout";
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import CreateHintModal from "../components/CreateHintModal";
 import { useHotkeys } from "@mantine/hooks";
 import HintCard from "../components/HintCard";
@@ -13,34 +13,56 @@ import { openDeleteConfirmModal } from "../components/Modals/openConfirmModals";
 import { showNotification } from "@mantine/notifications";
 import CreateCollectionModal from "../components/Modals/CollectionModal";
 import isStringEmpty from "../../utils/isStringEmpty";
+import { useForm } from "@mantine/form";
+
+function handleCreateHintError() {
+  showNotification({
+    title: "Error",
+    message: "All fields must be filled",
+    color: "red"
+  })
+}
 
 const SingleCollection: NextPage = () => {
   const [isHintModalOpen, setHintModalOpen] = useState(false);
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
-  const SearchBarRef = useRef<HTMLInputElement>(null);
-
-  // const [hints, setHints] = useState([]); 
+  // const SearchBarRef = useRef<HTMLInputElement>(null);
 
   // New hint state
   const [hintTitle, setHintTitle] = useState("");
   const [hintCollection, setHintCollection] = useState("");
   const [hintContent, setHintContent] = useState("");
 
+  // form
+  const form = useForm({
+    initialValues: {
+      title: "",
+      // collection: "",
+      content: ""
+    },
+    validate: {
+      title: (title) => isStringEmpty(title) ?? "Title cannot be empty",
+      content: (content) => isStringEmpty(content) ?? "Content cannot be empty"
+    }
+  })
+
   // router
   const router = useRouter();
   const currentCollectionId = router.query.id as string;
 
   // trpc
-  const createCollectionMutation = trpc.collection.create.useMutation();
+  // const createCollectionMutation = trpc.collection.create.useMutation();
   const updateCollectionMutation = trpc.collection.update.useMutation();
   const deleteCollectionMutation = trpc.collection.delete.useMutation();
   const {
     data: currentCollection,
-    isLoading
+    isLoading: isCurrentCollectionLoading,
+    isError: isCurrentCollectionError,
   } = trpc.collection.getById.useQuery(
     { id: currentCollectionId },
     {
       onSuccess: (data) => {
+        // setCurrentCollection(data);
         setHintCollection(data.name);
       },
     }
@@ -51,14 +73,15 @@ const SingleCollection: NextPage = () => {
   const deleteHintMutation = trpc.hint.delete.useMutation();
   const {
     data: hints,
-    isLoading: isHintsLoading
+    // isLoading: isHintsLoading,
+    isError: isHintsError,
   } = trpc.hint.getAllByCollectionId.useQuery(
     { collectionId: currentCollectionId },
-    {
-      onSuccess: (data) => {
-        // setHints(data);
-      },
-    }
+    // {
+    //   onSuccess: (data) => {
+    //     // setHints(data);
+    //   },
+    // }
   );
 
   const utils = trpc.useContext();
@@ -69,11 +92,14 @@ const SingleCollection: NextPage = () => {
     // ["/", () => SearchBarRef.current?.focus()]
   ])
 
+  if (isHintsError || isCurrentCollectionError) {
+    <div>Error loading hints or collection</div>
+  }
 
 
   return (
     <MainLayout containerSize="md">
-      {isLoading ? (
+      {isCurrentCollectionLoading ? (
         <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }} mt="xl">
           <Loader color="indigo" />
         </Box>
@@ -85,6 +111,7 @@ const SingleCollection: NextPage = () => {
             name={hintCollection}
             setName={setHintCollection}
             onConfirm={(e) => {
+              // TODO: useForm for collection
               e.preventDefault();
               // Check if field is empty
               if (isStringEmpty(hintCollection)) {
@@ -116,45 +143,31 @@ const SingleCollection: NextPage = () => {
                 }
               })
             }}
-            onCancel={(e) => { setCollectionModalOpen(false) }}
+            onCancel={() => { setCollectionModalOpen(false) }}
           />
           <CreateHintModal
             isModalOpen={isHintModalOpen}
             setModalOpen={setHintModalOpen}
+            handleTitleChange={(e) => setHintTitle(e.currentTarget.value)}
             hintTitle={hintTitle}
-            setHintTitle={setHintTitle}
-            hintCollection={hintCollection}
-            setHintCollection={setHintCollection}
+
+            handleContentChange={(editorHtml) => setHintContent(editorHtml)}
             hintContent={hintContent}
-            setHintContent={setHintContent}
-            onConfirm={(e) => {
-              e.preventDefault();
-              // Check if fields are empty
-              console.log("hintTitle", hintTitle)
-              console.log("hintContent", hintContent)
-              if (isStringEmpty(hintTitle) || isStringEmpty(hintContent)) {
-                showNotification({
-                  message: "Fields can not be empty",
-                  color: "yellow"
-                })
-                return;
-              }
 
+            // handleCollectionChange={(name, id) => setHintCollection({name, id})}
+            // hintCollection={hintCollection}
 
+            form={form}
+            onConfirm={form.onSubmit((values) => {
               // TODO: optimistic update
               createHintMutation.mutate({
-                title: hintTitle,
+                title: values.title,
                 collectionId: currentCollection.id,
-                content: hintContent
+                content: values.content
               }, {
                 onSuccess: () => {
                   setHintModalOpen(false);
-
-                  // TODO: use form functions from mantine to clear form
-                  setHintTitle("");
-                  setHintCollection("");
-                  setHintContent("");
-
+                  form.reset();
                   showNotification({
                     title: "Hint created",
                     message: "Hint created successfully",
@@ -170,7 +183,7 @@ const SingleCollection: NextPage = () => {
                   })
                 }
               })
-            }}
+            }, handleCreateHintError)}
             onCancel={() => { setHintModalOpen(false); }}
           />
 
@@ -179,9 +192,7 @@ const SingleCollection: NextPage = () => {
               <Title align="center">{currentCollection?.name}</Title>
 
               <Tooltip label="Edit Collection">
-                <span onClick={() => {
-                  setCollectionModalOpen(true);
-                }}>
+                <span onClick={() => { setCollectionModalOpen(true) }}>
                   <IconEdit size={20} style={{ cursor: "pointer" }} />
                 </span>
               </Tooltip>
@@ -221,8 +232,6 @@ const SingleCollection: NextPage = () => {
               </Tooltip>
             </Group>
 
-            {/* TODO: show cmd or ctrl depending on OS */}
-            {/* <Tooltip label="Create Hint (⌘ + K)"> */}
             <Tooltip label="Create Hint ('C')">
               <Button color="indigo.8" leftIcon={<IconFilePlus size={18} />} onClick={() => setHintModalOpen(true)}>
                 Create Hint
@@ -233,24 +242,24 @@ const SingleCollection: NextPage = () => {
           {/* <SearchBar ref={SearchBarRef} mb="xl" /> */}
           <SearchBar mb="xl" />
 
-          {hints.length === 0 ?
+          {hints?.length === 0 ?
             (<Text fz="sm" c="gray.6">No hints in this collection.</Text>) :
             (
               <ul style={{ paddingLeft: 0 }}>
                 <SimpleGrid cols={2} spacing="xl">
                   {
-                    hints.map(hint => (
+                    hints?.map(hint => (
                       <HintCard
                         key={hint.id}
                         hint={hint}
                         onDelete={() => {
                           deleteHintMutation.mutate({ id: hint.id }, {
-                            onSuccess: () => { 
-                              showNotification({ message: "Hint deleted", color: "red" }) 
+                            onSuccess: () => {
+                              showNotification({ message: "Hint deleted", color: "red" })
                               utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId });
                             },
-                            onError: (error) => { 
-                              showNotification({ message: error.message, color: "red" }) 
+                            onError: (error) => {
+                              showNotification({ message: error.message, color: "red" })
                             }
                           })
                         }}
