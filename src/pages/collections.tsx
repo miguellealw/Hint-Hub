@@ -4,13 +4,14 @@ import { IconFilePlus, IconFolderPlus } from "@tabler/icons";
 import { type NextPage } from "next";
 import MainLayout from "./components/layouts/MainLayout";
 import { InputWithButton as SearchBar } from "./components/InputWithButton";
-import CreateHintModal from "./components/CreateHintModal";
+// import CreateHintModal from "./components/CreateHintModal";
 import CreateCollectionModal from "./components/Modals/CollectionModal";
 import { trpc } from "../utils/trpc";
 import { type Collection } from "@prisma/client";
 import Link from "next/link";
 import { showNotification } from "@mantine/notifications";
 import { useHotkeys } from "@mantine/hooks";
+import useCollectionForm from "../hooks/useCollectionForm";
 
 const useStyles = createStyles((theme) => ({
   collectionCard: {
@@ -36,15 +37,18 @@ const useStyles = createStyles((theme) => ({
 const Collections: NextPage = () => {
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
   const [isHintModalOpen, setHintModalOpen] = useState(false);
-  const [collectionName, setCollectionName] = useState("");
+  // const [collectionName, setCollectionName] = useState("");
+
+  const collectionForm = useCollectionForm("");
 
   const { classes } = useStyles();
   useHotkeys([
-    ["c", () => setHintModalOpen(true)],
+    // ["c", () => setHintModalOpen(true)],
     ["o", () => setCollectionModalOpen(true)]
     // FIXME: SearchBarRef is null
     // ["/", () => SearchBarRef.current?.focus()]
   ])
+
 
   // trpc
   const { data: collections, isLoading } = trpc.collection.getAll.useQuery();
@@ -56,41 +60,35 @@ const Collections: NextPage = () => {
       <CreateCollectionModal
         isModalOpen={isCollectionModalOpen}
         setModalOpen={setCollectionModalOpen}
-        name={collectionName}
-        setName={setCollectionName}
-        onConfirm={(e) => {
-          e.preventDefault();
-          // Check if field is empty
-          if (typeof collectionName === "string" && collectionName.trim() === "") {
-            showNotification({
-              message: "Name field can not be empty",
-              color: "yellow"
-            })
-            return;
-          }
-
+        form={collectionForm}
+        onConfirm={collectionForm.onSubmit((values) => {
           // TODO: optimistic update
-          mutation.mutate({ name: collectionName }, {
+          mutation.mutate({ name: values.name }, {
             onSuccess: () => {
               setCollectionModalOpen(false);
-              setCollectionName("");
+              collectionForm.reset();
               showNotification({
                 title: "Collection created",
                 message: "Collection created successfully",
               })
-
-              utils.collection.getAll.invalidate();
             },
+
             onError: (error) => {
               showNotification({
                 title: "Error creating collection",
                 message: error.message,
                 color: "red"
               })
+            },
+            onSettled: () => {
+              utils.collection.getAll.invalidate();
             }
           })
+        }, collectionForm.handleEditCollectionError)}
+        onCancel={(e) => {
+          setCollectionModalOpen(false)
+          collectionForm.reset();
         }}
-        onCancel={(e) => { setCollectionModalOpen(false) }}
       />
       {/* <CreateHintModal 
         isModalOpen={isHintModalOpen} setModalOpen={setHintModalOpen} 
@@ -103,16 +101,16 @@ const Collections: NextPage = () => {
 
         {/* TODO: show cmd or ctrl depending on OS */}
         <Group>
-          <Tooltip label="Create Hint ('C')">
+          {/* <Tooltip label="Create Hint ('C')">
             <Button variant="subtle" color="indigo.5" leftIcon={<IconFilePlus size={18} />} onClick={() => setHintModalOpen(true)}>
               Create Hint
             </Button>
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip label="Create Collection ('O')">
 
-            <Button 
-              color="indigo.8" 
-              leftIcon={<IconFolderPlus size={18} />} 
+            <Button
+              color="indigo.8"
+              leftIcon={<IconFolderPlus size={18} />}
               onClick={() => {
                 setCollectionModalOpen(true);
               }}
