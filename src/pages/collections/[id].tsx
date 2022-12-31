@@ -7,7 +7,7 @@ import { useState } from 'react';
 import CreateHintModal from "../components/CreateHintModal";
 import { useHotkeys } from "@mantine/hooks";
 import HintCard from "../components/HintCard";
-import { type ReactQueryOptions, trpc } from "../../utils/trpc";
+import { trpc } from "../../utils/trpc";
 import { useRouter } from "next/router";
 import { openDeleteConfirmModal } from "../components/Modals/openConfirmModals";
 import { showNotification } from "@mantine/notifications";
@@ -26,9 +26,10 @@ const SingleCollection: NextPage = () => {
 
   // New hint state
   const [hintContent, setHintContent] = useState("");
+  const [selectedHint, setSelectedHint] = useState<Hint | undefined>(undefined);
 
   // forms
-  const hintForm = useHintForm();
+  const hintForm = useHintForm({ title: "", content: "" });
   const collectionForm = useCollectionForm(currentCollectionName);
 
   // router
@@ -45,7 +46,7 @@ const SingleCollection: NextPage = () => {
   because it will be used in the form for editing
   */
   const {
-    data: RouterOutputs,
+    data: currentCollection,
     isLoading: isCurrentCollectionLoading,
     isError: isCurrentCollectionError,
     isSuccess: isCurrentCollectionSuccess
@@ -57,7 +58,7 @@ const SingleCollection: NextPage = () => {
   });
 
   const createHintMutation = trpc.hint.create.useMutation();
-  // const updateHintMutation = trpc.hint.update.useMutation();
+  const updateHintMutation = trpc.hint.update.useMutation();
   const deleteHintMutation = trpc.hint.delete.useMutation();
   const {
     data: hints,
@@ -121,37 +122,59 @@ const SingleCollection: NextPage = () => {
           <CreateHintModal
             isModalOpen={isHintModalOpen}
             setModalOpen={setHintModalOpen}
+            isEditing={typeof selectedHint !== "undefined"}
 
             handleContentChange={(editorHtml) => setHintContent(editorHtml)}
             hintContent={hintContent}
 
+            // if hint is being edited, set the form values to the selected hint
+            initialValues={
+              typeof selectedHint !== "undefined" ?
+                { title: selectedHint.title, content: selectedHint.content } :
+                { title: "", content: "" }
+            }
+
+
             form={hintForm}
             onConfirm={hintForm.onSubmit((values) => {
               // TODO: optimistic update
-              createHintMutation.mutate({
-                title: values.title,
-                collectionId: currentCollectionId,
-                content: values.content
-              }, {
-                onSuccess: () => {
-                  setHintModalOpen(false);
-                  // TODO: only run form reset when creating hint, not updating it
-                  // hintForm.reset();
-                  showNotification({
-                    title: "Hint created",
-                    message: "Hint created successfully",
-                  })
+              if (typeof selectedHint !== "undefined") {
+                updateHintMutation.mutate({
+                  id: selectedHint.id,
+                  title: values.title,
+                  content: values.content,
+                }, {
+                  onSuccess: () => {
+                    setHintModalOpen(false);
+                    showNotification({ title: "Hint updated", message: "Hint updated successfully" })
+                  },
+                  onError: (error) => {
+                    showNotification({ title: "Error updating hint", message: error.message, color: "red" })
+                  },
+                  onSettled: () => {
+                    utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId });
+                  }
+                })
+              } else {
+                createHintMutation.mutate({
+                  title: values.title,
+                  collectionId: currentCollectionId,
+                  content: values.content
+                }, {
+                  onSuccess: () => {
+                    setHintModalOpen(false);
+                    hintForm.reset();
+                    showNotification({ title: "Hint created", message: "Hint created successfully" })
+                  },
+                  onError: (error) => {
+                    showNotification({ title: "Error creating hint", message: error.message, color: "red" })
+                  },
+                  onSettled: () => {
+                    utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId });
+                  }
+                })
+              }
 
-                  utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId });
-                },
-                onError: (error) => {
-                  showNotification({
-                    title: "Error creating hint",
-                    message: error.message,
-                    color: "red"
-                  })
-                }
-              })
             }, hintForm.handleCreateHintError)}
             onCancel={() => {
               hintForm.reset();
@@ -219,12 +242,29 @@ const SingleCollection: NextPage = () => {
             (
               <ul style={{ paddingLeft: 0 }}>
                 <SimpleGrid cols={2} spacing="xl">
-                  <HintsList 
-                    hints={hints} 
-                    currentCollectionId={currentCollectionId} 
-                    mutation={deleteHintMutation} 
-                    utils={utils} 
-                  />
+                  {
+                    hints?.map(hint => (
+                      <HintCard
+                        key={hint.id}
+                        hint={hint}
+                        onEdit={() => {
+                          setHintModalOpen(true)
+                          setSelectedHint(hint);
+                        }}
+                        onDelete={() => {
+                          deleteHintMutation.mutate({ id: hint.id }, {
+                            onSuccess: () => {
+                              showNotification({ message: "Hint deleted", color: "red" })
+                              utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId });
+                            },
+                            onError: (error) => {
+                              showNotification({ message: error.message, color: "red" })
+                            }
+                          })
+                        }}
+                      />
+                    ))
+                  }
                 </SimpleGrid>
               </ul>
             )}
@@ -235,45 +275,5 @@ const SingleCollection: NextPage = () => {
   )
 
 }
-
-
-
-const HintsList = ({
-  hints,
-  currentCollectionId,
-  mutation,
-  utils
-}: {
-  hints: Hint[] | undefined
-  currentCollectionId: string
-  // TODO: fix this any
-  mutation: any
-  utils: any
-}) => {
-  return (
-    <>
-      {
-        hints?.map(hint => (
-          <HintCard
-            key={hint.id}
-            hint={hint}
-            onDelete={() => {
-              mutation.mutate({ id: hint.id }, {
-                onSuccess: () => {
-                  showNotification({ message: "Hint deleted", color: "red" })
-                  utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId });
-                },
-                onError: (error) => {
-                  showNotification({ message: error.message, color: "red" })
-                }
-              })
-            }}
-          />
-        ))
-
-      }</>
-  )
-}
-
 
 export default SingleCollection;

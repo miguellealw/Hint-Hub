@@ -2,6 +2,11 @@ import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import isStringEmpty from "../utils/isStringEmpty";
 
+type HintFormValues = {
+  title: string;
+  content: string;
+}
+
 const handleCreateHintError = () =>
   showNotification({
     title: "Error",
@@ -9,16 +14,12 @@ const handleCreateHintError = () =>
     color: "red"
   })
 
-const useHintForm = () => {
+const useHintForm = (initialValues: HintFormValues) => {
 
   return {
     handleCreateHintError,
     ...useForm({
-      initialValues: {
-        title: "",
-        // collection: "",
-        content: ""
-      },
+      initialValues,
       validate: {
         title: (title) => isStringEmpty(title) ?? "Title field can't be empty",
         content: (content) => isStringEmpty(content) ?? "Content field can't be empty"

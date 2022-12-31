@@ -49,23 +49,22 @@ export const hintRouter = router({
       });
     }),
 
-  // TODO: the input type must be worked on since smoe values will be null
   update: protectedProcedure
     .input(
       z.object({
+        id: z.string(),
         title: z.string(),
         content: z.string(),
-        collectionId: z.string(),
-        userId: z.string()
       })
     )
     .mutation(({ input, ctx }) => {
-      return ctx.prisma.hint.create({
+      return ctx.prisma.hint.update({
+        where: {
+          id: input.id,
+        },
         data: {
           title: input.title,
           content: input.content,
-          collectionId: input.collectionId,
-          userId: input.userId,
         },
       });
     }),

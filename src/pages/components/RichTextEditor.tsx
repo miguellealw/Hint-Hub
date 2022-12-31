@@ -41,14 +41,18 @@ export default function RREditor({ ...props }) {
     ],
     // content,
     onUpdate: ({ editor }) => {
-      props.form.setValues({ content: editor.getHTML() })
+      props.form.setFieldValue("content", editor.getHTML())
+    },
+    onCreate: ({ editor }) => {
+      props.form.setValues({...props.initialValues})
+      editor.commands.setContent(props.initialValues.content)
     }
 
   });
 
 
   return (
-    <RichTextEditor editor={editor} placeholder="hint here" {...props}>
+    <RichTextEditor editor={editor} placeholder="hint here" {...props} >
       <RichTextEditor.Toolbar sticky stickyOffset={60}>
         <RichTextEditor.ControlsGroup>
           <RichTextEditor.Bold />

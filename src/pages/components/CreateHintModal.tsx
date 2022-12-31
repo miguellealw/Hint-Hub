@@ -2,25 +2,27 @@ import { type MouseEventHandler, type FormEvent } from 'react';
 import { Modal, Button, Group, TextInput, Tooltip } from '@mantine/core';
 import Editor from './RichTextEditor';
 import { type UseFormReturnType } from '@mantine/form';
+import { Hint } from '@prisma/client';
 // import { CreatableSelect as CollectionSelect } from './CreatableSelect';
 
-type CreateHintFormValues = {
+type HintFormValues = {
   title: string;
-  // collection: string;
   content: string;
 }
 
 type CreateHintModalProps = {
   isModalOpen: boolean;
-  setModalOpen: (value: boolean) => void;
+  setModalOpen: (value: boolean) => void
 
-  hintContent: string;
-  handleContentChange: (value: string) => void;
+  hintContent: string
+  handleContentChange: (value: string) => void
 
-  onConfirm: (e: FormEvent<HTMLFormElement>) => void;
-  onCancel: MouseEventHandler<HTMLButtonElement>;
-  form: UseFormReturnType<CreateHintFormValues>,
-  isEditing?: boolean,
+  onConfirm: (e: FormEvent<HTMLFormElement>) => void
+  onCancel: MouseEventHandler<HTMLButtonElement>
+  form: UseFormReturnType<HintFormValues>
+  isEditing?: boolean
+
+  initialValues: HintFormValues
 }
 
 export default function CreateHintModal({
@@ -30,7 +32,8 @@ export default function CreateHintModal({
   onCancel,
   hintContent,
   form,
-  isEditing
+  isEditing,
+  initialValues,
 }: CreateHintModalProps) {
   return (
     <Modal
@@ -41,9 +44,7 @@ export default function CreateHintModal({
       size="xl"
     >
       <form onSubmit={onConfirm}>
-        <TextInput label="Title" placeholder="Title" data-autofocus
-          {...form.getInputProps('title')}
-        />
+        <TextInput label="Title" placeholder="Title" data-autofocus {...form.getInputProps('title')}/>
         {/* <CollectionSelect
           mt="md"
           description="To create a new collection just type its name"
@@ -56,7 +57,7 @@ export default function CreateHintModal({
           value={hintContent}
           onContentUpdate={handleContentChange}
           form={form}
-        // {...form.getInputProps('content')}
+          initialValues={initialValues}
         // onKeydown={(e) => getHotkeyHandler([
         //   ['mod+shift+Enter', onConfirm]
         // ])}

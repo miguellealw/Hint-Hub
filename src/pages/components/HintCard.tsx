@@ -6,6 +6,7 @@ import { Hint } from "@prisma/client";
 type HintCardProps = {
   hint: Hint;
   onDelete: () => void;
+  onEdit: () => void;
 }
 
 const useStyles = createStyles(theme => ({
@@ -26,7 +27,7 @@ const useStyles = createStyles(theme => ({
   },
 }))
 
-export default function HintCard({ hint, onDelete, ...props }: HintCardProps) {
+export default function HintCard({ hint, onDelete, onEdit, ...props }: HintCardProps) {
   const { classes, cx } = useStyles();
 
   return (
@@ -34,7 +35,7 @@ export default function HintCard({ hint, onDelete, ...props }: HintCardProps) {
     <li {...props} style={{ listStyleType: "none", position: "relative" }}>
       <Group position="apart" align="center" mb="sm">
         <Title order={6}>{hint.title}</Title>
-        <HintCardMenu classes={classes} onDelete={onDelete} />
+        <HintCardMenu classes={classes} onDelete={onDelete} onEdit={onEdit} />
       </Group>
       {/* must be 'div' instead of 'p', or it will give hydration error */}
 
