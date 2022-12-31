@@ -7,7 +7,7 @@ import { useState } from 'react';
 import CreateHintModal from "../components/CreateHintModal";
 import { useHotkeys } from "@mantine/hooks";
 import HintCard from "../components/HintCard";
-import { trpc } from "../../utils/trpc";
+import { type ReactQueryOptions, trpc } from "../../utils/trpc";
 import { useRouter } from "next/router";
 import { openDeleteConfirmModal } from "../components/Modals/openConfirmModals";
 import { showNotification } from "@mantine/notifications";
@@ -15,7 +15,7 @@ import CreateCollectionModal from "../components/Modals/CollectionModal";
 import { useDeleteCollection, useUpdateCollection } from "../../hooks/collection";
 import useHintForm from "../../hooks/useHintForm";
 import useCollectionForm from "../../hooks/useCollectionForm";
-import { Hint } from "@prisma/client";
+import type { Hint } from "@prisma/client";
 
 
 const SingleCollection: NextPage = () => {
@@ -45,12 +45,13 @@ const SingleCollection: NextPage = () => {
   because it will be used in the form for editing
   */
   const {
-    data: currentCollection,
+    data: RouterOutputs,
     isLoading: isCurrentCollectionLoading,
     isError: isCurrentCollectionError,
     isSuccess: isCurrentCollectionSuccess
   } = trpc.collection.getById.useQuery({ id: currentCollectionId }, {
     onSuccess: (data) => {
+      setCurrentCollectionName(data.name);
       collectionForm.setValues({ name: data.name })
     }
   });
@@ -129,7 +130,7 @@ const SingleCollection: NextPage = () => {
               // TODO: optimistic update
               createHintMutation.mutate({
                 title: values.title,
-                collectionId: currentCollection.id,
+                collectionId: currentCollectionId,
                 content: values.content
               }, {
                 onSuccess: () => {
@@ -160,7 +161,7 @@ const SingleCollection: NextPage = () => {
 
           <Group position="apart" align="center" my="xl">
             <Group align="center">
-              <Title align="center">{currentCollection.name}</Title>
+              <Title align="center">{currentCollectionName}</Title>
 
               <Tooltip label="Edit Collection">
                 <span onClick={() => { setCollectionModalOpen(true) }}>
@@ -218,7 +219,12 @@ const SingleCollection: NextPage = () => {
             (
               <ul style={{ paddingLeft: 0 }}>
                 <SimpleGrid cols={2} spacing="xl">
-                  <HintsList hints={hints} currentCollectionId={currentCollectionId} mutation={deleteHintMutation} utils={utils} />
+                  <HintsList 
+                    hints={hints} 
+                    currentCollectionId={currentCollectionId} 
+                    mutation={deleteHintMutation} 
+                    utils={utils} 
+                  />
                 </SimpleGrid>
               </ul>
             )}
@@ -240,13 +246,14 @@ const HintsList = ({
 }: {
   hints: Hint[] | undefined
   currentCollectionId: string
-  mutation: unknown
-  utils: unknown
+  // TODO: fix this any
+  mutation: any
+  utils: any
 }) => {
   return (
     <>
       {
-        hints.map(hint => (
+        hints?.map(hint => (
           <HintCard
             key={hint.id}
             hint={hint}
