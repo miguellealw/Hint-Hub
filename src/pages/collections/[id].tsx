@@ -146,6 +146,8 @@ const SingleCollection: NextPage = () => {
                 }, {
                   onSuccess: () => {
                     setHintModalOpen(false);
+                    setSelectedHint(undefined); // reset selected hint
+                    hintForm.reset();
                     showNotification({ title: "Hint updated", message: "Hint updated successfully" })
                   },
                   onError: (error) => {
@@ -176,9 +178,11 @@ const SingleCollection: NextPage = () => {
               }
 
             }, hintForm.handleCreateHintError)}
-            onCancel={() => {
-              hintForm.reset();
+            onCancel={() => { setHintModalOpen(false) }}
+            onClose={() => {
               setHintModalOpen(false);
+              hintForm.reset();
+              setSelectedHint(undefined); // reset selected hint
             }}
           />
 

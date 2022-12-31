@@ -1,5 +1,5 @@
 import { type MouseEventHandler, type FormEvent } from 'react';
-import { Modal, Button, Group, TextInput, Tooltip } from '@mantine/core';
+import { Modal, Button, Group, TextInput, Tooltip, ModalProps } from '@mantine/core';
 import Editor from './RichTextEditor';
 import { type UseFormReturnType } from '@mantine/form';
 import { Hint } from '@prisma/client';
@@ -19,6 +19,7 @@ type CreateHintModalProps = {
 
   onConfirm: (e: FormEvent<HTMLFormElement>) => void
   onCancel: MouseEventHandler<HTMLButtonElement>
+  onClose: ModalProps["onClose"]
   form: UseFormReturnType<HintFormValues>
   isEditing?: boolean
 
@@ -30,15 +31,17 @@ export default function CreateHintModal({
   handleContentChange,
   onConfirm,
   onCancel,
+  onClose,
   hintContent,
   form,
   isEditing,
   initialValues,
 }: CreateHintModalProps) {
+  console.log("initial values", initialValues)
   return (
     <Modal
       opened={isModalOpen}
-      onClose={() => { setModalOpen(false) }}
+      onClose={onClose}
       title={`${isEditing ? "Update" : "Create"} Hint`}
       overflow="inside"
       size="xl"
