@@ -20,7 +20,7 @@ export const collectionRouter = router({
   }),
 
   create: protectedProcedure
-    .input(z.object({ name: z.string() }))
+    .input(z.object({ name: z.string().min(1, "Name is required") }))
     .mutation(async ({ input, ctx }) => {
       const collection = await ctx.prisma.collection.findFirst({
         where: { name: input.name, userId: ctx.session.user.id },
@@ -36,7 +36,7 @@ export const collectionRouter = router({
     }),
 
   update: protectedProcedure
-    .input(z.object({ id: z.string(), name: z.string() }))
+    .input(z.object({ id: z.string(), name: z.string().min(1, "Name is required") }))
     .mutation(async ({ input, ctx }) => {
       // TODO: check if collection exists
       const collection = await ctx.prisma.collection.findFirst({ where: { name: input.name, }, });

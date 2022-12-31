@@ -33,8 +33,8 @@ export const hintRouter = router({
   create: protectedProcedure
     .input(
       z.object({
-        title: z.string(),
-        content: z.string(),
+        title: z.string().min(1, "Title is required"),
+        content: z.string().min(1, "Content is required"),
         collectionId: z.string(),
       })
     )
@@ -53,8 +53,8 @@ export const hintRouter = router({
     .input(
       z.object({
         id: z.string(),
-        title: z.string(),
-        content: z.string(),
+        title: z.string().min(1, "Title is required"),
+        content: z.string().min(1, "Content is required")
       })
     )
     .mutation(({ input, ctx }) => {
