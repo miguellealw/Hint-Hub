@@ -2,6 +2,9 @@ import { createStyles, Group, Title, TypographyStylesProvider } from "@mantine/c
 import HintCardMenu from "./HintCardMenu";
 import { Prism } from "@mantine/prism";
 import { Hint } from "@prisma/client";
+import { useClipboard } from "@mantine/hooks";
+import { showNotification } from "@mantine/notifications";
+import { IconCheck } from "@tabler/icons";
 
 type HintCardProps = {
   hint: Hint;
@@ -13,8 +16,9 @@ const useStyles = createStyles(theme => ({
   card: {
     // backgroundColor: theme.colors.indigo[0],
     backgroundColor: theme.colors.gray[1],
-    padding: theme.spacing.lg,
+    padding: theme.spacing.sm,
     borderRadius: theme.radius.sm,
+    border: `1px solid ${theme.colors.gray[2]}`,
     // lineHeight: 1.5,
     position: "relative"
   },
@@ -29,13 +33,26 @@ const useStyles = createStyles(theme => ({
 
 export default function HintCard({ hint, onDelete, onEdit, ...props }: HintCardProps) {
   const { classes, cx } = useStyles();
-
+  const clipboard = useClipboard({ timeout: 500 });
   return (
     // <Card shadow="sm" padding="xl" radius="md" my="md">
     <li {...props} style={{ listStyleType: "none", position: "relative" }}>
       <Group position="apart" align="center" mb="sm">
         <Title order={6}>{hint.title}</Title>
-        <HintCardMenu classes={classes} onDelete={onDelete} onEdit={onEdit} />
+        <HintCardMenu
+          classes={classes}
+          onDelete={onDelete}
+          onEdit={onEdit}
+          onCopy={() => { 
+            clipboard.copy(hint.content); 
+            showNotification({
+              message: "Copied content to clipboard", 
+              color: "teal", 
+              icon: <IconCheck />
+            });
+          }}
+        />
+
       </Group>
       {/* must be 'div' instead of 'p', or it will give hydration error */}
 

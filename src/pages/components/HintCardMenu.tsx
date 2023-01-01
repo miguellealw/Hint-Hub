@@ -10,9 +10,10 @@ type HintCardMenuProps = {
   }
   onDelete: () => void;
   onEdit: () => void;
+  onCopy: () => void;
 }
 
-export default function HintCardMenu({ classes, onDelete, onEdit }: HintCardMenuProps) {
+export default function HintCardMenu({ classes, onDelete, onEdit, onCopy }: HintCardMenuProps) {
   return (
     <Menu shadow="md" width={200} position="bottom-end">
       <Menu.Target>
@@ -25,7 +26,7 @@ export default function HintCardMenu({ classes, onDelete, onEdit }: HintCardMenu
       <Menu.Dropdown>
         <Menu.Label>Hint Options</Menu.Label>
         <Menu.Item icon={<IconEdit size={14} />} onClick={() => onEdit()}>Edit hint</Menu.Item>
-        <Menu.Item icon={<IconCopy size={14} />}>Copy content</Menu.Item>
+        <Menu.Item icon={<IconCopy size={14} />} onClick={() => onCopy()}>Copy content</Menu.Item>
         {/* TODO: for future */}
         {/* <Menu.Item icon={<IconShare size={14}/>}>Share</Menu.Item> */}
 
