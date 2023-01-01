@@ -9,10 +9,10 @@ import CreateCollectionModal from "./components/Modals/CollectionModal";
 import { trpc } from "../utils/trpc";
 import { type Collection } from "@prisma/client";
 import Link from "next/link";
-import { showNotification } from "@mantine/notifications";
 import { useHotkeys } from "@mantine/hooks";
 import useCollectionForm from "../hooks/useCollectionForm";
 import useUnauthed from "../hooks/useUnauthed";
+import { useCreateCollection } from "../hooks/collectionHooks";
 
 const useStyles = createStyles((theme) => ({
   collectionCard: {
@@ -37,9 +37,8 @@ const useStyles = createStyles((theme) => ({
 
 const Collections: NextPage = () => {
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
-  // const [isHintModalOpen, setHintModalOpen] = useState(false);
-  const {status} = useUnauthed();
-  // const [collectionName, setCollectionName] = useState("");
+  const { status } = useUnauthed();
+  const utils = trpc.useContext();
 
   const collectionForm = useCollectionForm("");
 
@@ -54,8 +53,11 @@ const Collections: NextPage = () => {
 
   // trpc
   const { data: collections, isLoading } = trpc.collection.getAll.useQuery();
-  const mutation = trpc.collection.create.useMutation();
-  const utils = trpc.useContext();
+  const mutation = useCreateCollection({
+    onMutateCb: () => { setCollectionModalOpen(false) },
+    onSuccessCb: () => { setCollectionModalOpen(false) },
+    onErrorCb: () => { setCollectionModalOpen(true) }
+  });
 
   if (status === "loading" || isLoading) {
     return (
@@ -66,83 +68,60 @@ const Collections: NextPage = () => {
   }
 
   // if (status === "authenticated") {
-    return (
-      <MainLayout containerSize="md">
-        <CreateCollectionModal
-          isModalOpen={isCollectionModalOpen}
-          setModalOpen={setCollectionModalOpen}
-          form={collectionForm}
-          onConfirm={collectionForm.onSubmit((values) => {
-            // TODO: optimistic update
-            mutation.mutate({ name: values.name }, {
-              onSuccess: () => {
-                setCollectionModalOpen(false);
-                collectionForm.reset();
-                showNotification({
-                  title: "Collection created",
-                  message: "Collection created successfully",
-                })
-              },
-
-              onError: (error) => {
-                showNotification({
-                  title: "Error creating collection",
-                  message: error.message,
-                  color: "red"
-                })
-              },
-              onSettled: () => {
-                utils.collection.getAll.invalidate();
-              }
-            })
-          }, collectionForm.handleEditCollectionError)}
-          onCancel={(e) => {
-            setCollectionModalOpen(false)
-            collectionForm.reset();
-          }}
-        />
-        {/* <CreateHintModal 
+  return (
+    <MainLayout containerSize="md">
+      <CreateCollectionModal
+        isModalOpen={isCollectionModalOpen}
+        setModalOpen={setCollectionModalOpen}
+        form={collectionForm}
+        onConfirm={collectionForm.onSubmit((values) => {
+          mutation.mutate({ name: values.name })
+        }, collectionForm.handleEditCollectionError)}
+        onCancel={(e) => {
+          setCollectionModalOpen(false)
+          collectionForm.reset();
+        }}
+      />
+      {/* <CreateHintModal 
           isModalOpen={isHintModalOpen} setModalOpen={setHintModalOpen} 
           onConfirm = {(e) => {}}
           onCancel = {() => { setHintModalOpen(false); }}
         /> */}
 
-        <Group position="apart" align="center" my="xl">
-          <Title align="center">My Collections</Title>
+      <Group position="apart" align="center" my="xl">
+        <Title align="center">My Collections</Title>
 
-          {/* TODO: show cmd or ctrl depending on OS */}
-          <Group>
-            {/* <Tooltip label="Create Hint ('C')">
+        {/* TODO: show cmd or ctrl depending on OS */}
+        <Group>
+          {/* <Tooltip label="Create Hint ('C')">
               <Button variant="subtle" color="indigo.5" leftIcon={<IconFilePlus size={18} />} onClick={() => setHintModalOpen(true)}>
                 Create Hint
               </Button>
             </Tooltip> */}
-            <Tooltip label="Create Collection ('O')">
+          <Tooltip label="Create Collection ('O')">
 
-              <Button
-                color="indigo.8"
-                leftIcon={<IconFolderPlus size={18} />}
-                onClick={() => {
-                  setCollectionModalOpen(true);
-                }}
-              >
-                Create Collection
-              </Button>
-            </Tooltip>
-          </Group>
+            <Button
+              color="indigo.8"
+              leftIcon={<IconFolderPlus size={18} />}
+              onClick={() => { setCollectionModalOpen(true); }}
+            >
+              Create Collection
+            </Button>
+          </Tooltip>
         </Group>
+      </Group>
 
-        <SearchBar mb="xl" />
+      <SearchBar mb="xl" />
 
 
-        {isLoading ? (
-          <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <Loader color="indigo" />
-          </Box>
-        ) : <CollectionsList collections={collections} classes={classes} />}
+      {isLoading ? (
+        <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <Loader color="indigo" />
+        </Box>
+      ) : <CollectionsList collections={collections} classes={classes} />}
 
-      </MainLayout>
-    )
+    </MainLayout>
+  )
   // }
 
 }
@@ -154,7 +133,7 @@ const CollectionsList = ({ collections, classes }: { collections: Collection[] |
     <ul style={{ paddingLeft: 0 }}>
       <SimpleGrid cols={3}>
         {collections?.length === 0 ?
-          <Text align="center" c="indigo.5">You don&apos;t have any collections yet.</Text> :
+          <Text align="center" c="gray.5">You don&apos;t have any collections yet.</Text> :
           collections?.map(collection => (
             <Link key={collection.id} href={`/collections/${collection.id}`}>
               <li className={classes.collectionCard}>
