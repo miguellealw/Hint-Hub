@@ -9,6 +9,7 @@ type CreateHintModalProps = {
 
   onConfirm: (e: FormEvent<HTMLFormElement>) => void;
   onCancel: (e: SyntheticEvent) => void;
+  onClose: () => void;
 
   form: UseFormReturnType<{ name: string }>,
   isEditing?: boolean,
@@ -20,13 +21,14 @@ export default function CreateCollectionModal({
   setModalOpen,
   onConfirm,
   onCancel,
+  onClose,
   form,
   isEditing
 }: CreateHintModalProps) {
   return (
     <Modal
       opened={isModalOpen}
-      onClose={() => { setModalOpen(false) }}
+      onClose={onClose}
       title={`${isEditing ? "Update" : "Create"} Collection`}
       size="md"
     >

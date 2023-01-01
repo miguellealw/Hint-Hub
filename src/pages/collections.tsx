@@ -56,7 +56,10 @@ const Collections: NextPage = () => {
   const mutation = useCreateCollection({
     onMutateCb: () => { setCollectionModalOpen(false) },
     onSuccessCb: () => { setCollectionModalOpen(false) },
-    onErrorCb: () => { setCollectionModalOpen(true) }
+    onErrorCb: (newCollection) => {
+      collectionForm.setFieldValue("name", newCollection.name)
+      setCollectionModalOpen(true)
+    }
   });
 
   if (status === "loading" || isLoading) {
@@ -74,6 +77,10 @@ const Collections: NextPage = () => {
         isModalOpen={isCollectionModalOpen}
         setModalOpen={setCollectionModalOpen}
         form={collectionForm}
+        onClose={() => {
+          setCollectionModalOpen(false);
+          collectionForm.reset();
+        }}
         onConfirm={collectionForm.onSubmit((values) => {
           mutation.mutate({ name: values.name })
         }, collectionForm.handleEditCollectionError)}

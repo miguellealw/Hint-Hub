@@ -11,7 +11,7 @@ const useGetCollectionsQuery = () => {
 const useCreateCollection = ({ onMutateCb, onSuccessCb, onErrorCb }: {
   onMutateCb: () => void,
   onSuccessCb: () => void,
-  onErrorCb: () => void
+  onErrorCb: (newCollection: { name: string }) => void
 }) => {
   const utils = trpc.useContext();
 
@@ -41,7 +41,7 @@ const useCreateCollection = ({ onMutateCb, onSuccessCb, onErrorCb }: {
       })
     },
     onError: (err, newCollection, context) => {
-      onErrorCb();
+      onErrorCb(newCollection);
 
       // If something goes wrong, use the context returned from onMutate to roll back
       utils.collection.getAll.setData(context.prevData);
