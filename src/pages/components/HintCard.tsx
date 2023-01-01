@@ -5,6 +5,7 @@ import { Hint } from "@prisma/client";
 import { useClipboard } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons";
+import { convert } from 'html-to-text';
 
 type HintCardProps = {
   hint: Hint;
@@ -44,7 +45,8 @@ export default function HintCard({ hint, onDelete, onEdit, ...props }: HintCardP
           onDelete={onDelete}
           onEdit={onEdit}
           onCopy={() => { 
-            clipboard.copy(hint.content); 
+            const formattedText = convert(hint.content, { wordWrap: 130 });
+            clipboard.copy(formattedText); 
             showNotification({
               message: "Copied content to clipboard", 
               color: "teal", 

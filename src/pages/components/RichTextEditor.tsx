@@ -58,9 +58,9 @@ export default function RREditor({ ...props }) {
           <RichTextEditor.Bold />
           <RichTextEditor.Italic />
           <RichTextEditor.Underline />
-          <RichTextEditor.Strikethrough />
+          {/* <RichTextEditor.Strikethrough /> */}
           <RichTextEditor.ClearFormatting />
-          <RichTextEditor.Highlight />
+          {/* <RichTextEditor.Highlight /> */}
           <RichTextEditor.Code />
         </RichTextEditor.ControlsGroup>
 
@@ -72,7 +72,7 @@ export default function RREditor({ ...props }) {
         </RichTextEditor.ControlsGroup>
 
         <RichTextEditor.ControlsGroup>
-          <RichTextEditor.Blockquote />
+          {/* <RichTextEditor.Blockquote /> */}
           <RichTextEditor.Hr />
           <RichTextEditor.BulletList />
           <RichTextEditor.OrderedList />
@@ -85,12 +85,12 @@ export default function RREditor({ ...props }) {
           <RichTextEditor.Unlink />
         </RichTextEditor.ControlsGroup>
 
-        <RichTextEditor.ControlsGroup>
+        {/* <RichTextEditor.ControlsGroup>
           <RichTextEditor.AlignLeft />
           <RichTextEditor.AlignCenter />
           <RichTextEditor.AlignJustify />
           <RichTextEditor.AlignRight />
-        </RichTextEditor.ControlsGroup>
+        </RichTextEditor.ControlsGroup> */}
       </RichTextEditor.Toolbar>
 
       <RichTextEditor.Content />
