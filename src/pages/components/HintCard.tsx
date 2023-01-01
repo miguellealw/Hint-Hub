@@ -1,11 +1,10 @@
 import { createStyles, Group, Title, TypographyStylesProvider } from "@mantine/core";
 import HintCardMenu from "./HintCardMenu";
-import { Prism } from "@mantine/prism";
-import { Hint } from "@prisma/client";
+import type { Hint } from "@prisma/client";
 import { useClipboard } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons";
-import { convert } from 'html-to-text';
+import { htmlToText } from 'html-to-text';
 
 type HintCardProps = {
   hint: Hint;
@@ -15,7 +14,6 @@ type HintCardProps = {
 
 const useStyles = createStyles(theme => ({
   card: {
-    // backgroundColor: theme.colors.indigo[0],
     backgroundColor: theme.colors.gray[1],
     padding: theme.spacing.sm,
     borderRadius: theme.radius.sm,
@@ -45,7 +43,7 @@ export default function HintCard({ hint, onDelete, onEdit, ...props }: HintCardP
           onDelete={onDelete}
           onEdit={onEdit}
           onCopy={() => { 
-            const formattedText = convert(hint.content, { wordWrap: 130 });
+            const formattedText = htmlToText(hint.content);
             clipboard.copy(formattedText); 
             showNotification({
               message: "Copied content to clipboard", 

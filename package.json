@@ -38,6 +38,7 @@
     "@trpc/next": "^10.0.0",
     "@trpc/react-query": "^10.0.0",
     "@trpc/server": "^10.0.0",
+    "@types/html-to-text": "^8.1.1",
     "html-to-text": "^9.0.3",
     "lowlight": "^2.8.0",
     "next": "13.0.2",

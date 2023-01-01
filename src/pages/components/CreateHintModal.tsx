@@ -37,7 +37,6 @@ export default function CreateHintModal({
   isEditing,
   initialValues,
 }: CreateHintModalProps) {
-  console.log("initial values", initialValues)
   return (
     <Modal
       opened={isModalOpen}
@@ -47,7 +46,7 @@ export default function CreateHintModal({
       size="xl"
     >
       <form onSubmit={onConfirm}>
-        <TextInput label="Title" placeholder="Title" data-autofocus {...form.getInputProps('title')}/>
+        <TextInput label="Title" placeholder="Title" data-autofocus {...form.getInputProps('title')} />
         {/* <CollectionSelect
           mt="md"
           description="To create a new collection just type its name"
