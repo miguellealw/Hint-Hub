@@ -16,6 +16,7 @@ import { useDeleteCollection, useUpdateCollection } from "../../hooks/collection
 import useHintForm from "../../hooks/useHintForm";
 import useCollectionForm from "../../hooks/useCollectionForm";
 import type { Hint } from "@prisma/client";
+import useUnauthed from "../../hooks/useUnauthed";
 
 
 const SingleCollection: NextPage = () => {
@@ -23,6 +24,8 @@ const SingleCollection: NextPage = () => {
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
   // const SearchBarRef = useRef<HTMLInputElement>(null);
   const [currentCollectionName, setCurrentCollectionName] = useState("");
+
+  const { status } = useUnauthed();
 
   // New hint state
   const [hintContent, setHintContent] = useState("");
@@ -74,7 +77,13 @@ const SingleCollection: NextPage = () => {
     // ["/", () => SearchBarRef.current?.focus()]
   ])
 
-
+  if (status === "loading") {
+    return (
+      <Box sx={{ width: "100vw", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <Loader color="indigo" />
+      </Box>
+    )
+  }
 
   if (isHintsError || isCurrentCollectionError) {
     return <div>Error loading hints or collection</div>

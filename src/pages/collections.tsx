@@ -12,8 +12,7 @@ import Link from "next/link";
 import { showNotification } from "@mantine/notifications";
 import { useHotkeys } from "@mantine/hooks";
 import useCollectionForm from "../hooks/useCollectionForm";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import useUnauthed from "../hooks/useUnauthed";
 
 const useStyles = createStyles((theme) => ({
   collectionCard: {
@@ -39,14 +38,7 @@ const useStyles = createStyles((theme) => ({
 const Collections: NextPage = () => {
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
   // const [isHintModalOpen, setHintModalOpen] = useState(false);
-  const router = useRouter();
-  const { status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.push("/");
-      showNotification({ title: "Please login to continue", message: "You need to be logged in to view this page", color: "yellow" })
-    }
-  })
+  const {status} = useUnauthed();
   // const [collectionName, setCollectionName] = useState("");
 
   const collectionForm = useCollectionForm("");
