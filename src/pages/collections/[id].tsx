@@ -12,7 +12,7 @@ import { useRouter } from "next/router";
 import { openDeleteConfirmModal } from "../components/Modals/openConfirmModals";
 import { showNotification } from "@mantine/notifications";
 import CreateCollectionModal from "../components/Modals/CollectionModal";
-import { useDeleteCollection, useUpdateCollection } from "../../hooks/collection";
+import { useDeleteCollection, useUpdateCollection } from "../../hooks/collectionHooks";
 import useHintForm from "../../hooks/useHintForm";
 import useCollectionForm from "../../hooks/useCollectionForm";
 import type { Hint } from "@prisma/client";

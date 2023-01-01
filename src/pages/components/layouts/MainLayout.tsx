@@ -10,7 +10,6 @@ type MainLayoutProps = {
 }
 
 export default function MainLayout({ children, containerSize, ...props }: MainLayoutProps) {
-
   return (
     <>
       <MainHeader />

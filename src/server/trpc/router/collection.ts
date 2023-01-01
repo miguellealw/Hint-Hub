@@ -55,23 +55,24 @@ export const collectionRouter = router({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {
+      // find if collection exists
       const collection = await ctx.prisma.collection.findUnique({
         where: { id: input.id },
       });
 
-      if (!collection) {
-        throw new Error("Collection not found");
-      }
+      if (!collection) { throw new Error("Collection not found"); }
 
-      // if (collection.userId !== ctx.session.user.id) {
-      //   throw new Error("Not authorized");
-      // }
-
-      return ctx.prisma.collection.delete({
-        where: {
-          id: input.id,
-        },
+      // delete hints in collection first, since CASCADE is not yet implemented
+      // see here - https://www.prisma.io/docs/concepts/components/prisma-client/crud#cascading-deletes-deleting-related-records
+      const deleteHints = ctx.prisma.hint.deleteMany({
+        where: { collectionId: input.id, }
       });
+
+      const deleteCollection = ctx.prisma.collection.delete({
+        where: { id: input.id, },
+      });
+
+      return ctx.prisma.$transaction([deleteHints, deleteCollection]);
     })
 
 

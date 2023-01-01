@@ -12,6 +12,8 @@ import Link from "next/link";
 import { showNotification } from "@mantine/notifications";
 import { useHotkeys } from "@mantine/hooks";
 import useCollectionForm from "../hooks/useCollectionForm";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
   collectionCard: {
@@ -36,7 +38,15 @@ const useStyles = createStyles((theme) => ({
 
 const Collections: NextPage = () => {
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
-  const [isHintModalOpen, setHintModalOpen] = useState(false);
+  // const [isHintModalOpen, setHintModalOpen] = useState(false);
+  const router = useRouter();
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push("/");
+      showNotification({ title: "Please login to continue", message: "You need to be logged in to view this page", color: "yellow" })
+    }
+  })
   // const [collectionName, setCollectionName] = useState("");
 
   const collectionForm = useCollectionForm("");
@@ -55,83 +65,94 @@ const Collections: NextPage = () => {
   const mutation = trpc.collection.create.useMutation();
   const utils = trpc.useContext();
 
-  return (
-    <MainLayout containerSize="md">
-      <CreateCollectionModal
-        isModalOpen={isCollectionModalOpen}
-        setModalOpen={setCollectionModalOpen}
-        form={collectionForm}
-        onConfirm={collectionForm.onSubmit((values) => {
-          // TODO: optimistic update
-          mutation.mutate({ name: values.name }, {
-            onSuccess: () => {
-              setCollectionModalOpen(false);
-              collectionForm.reset();
-              showNotification({
-                title: "Collection created",
-                message: "Collection created successfully",
-              })
-            },
+  if (status === "loading" || isLoading) {
+    return (
+      <Box sx={{ width: "100vw", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <Loader color="indigo" />
+      </Box>
+    )
+  }
 
-            onError: (error) => {
-              showNotification({
-                title: "Error creating collection",
-                message: error.message,
-                color: "red"
-              })
-            },
-            onSettled: () => {
-              utils.collection.getAll.invalidate();
-            }
-          })
-        }, collectionForm.handleEditCollectionError)}
-        onCancel={(e) => {
-          setCollectionModalOpen(false)
-          collectionForm.reset();
-        }}
-      />
-      {/* <CreateHintModal 
-        isModalOpen={isHintModalOpen} setModalOpen={setHintModalOpen} 
-        onConfirm = {(e) => {}}
-        onCancel = {() => { setHintModalOpen(false); }}
-      /> */}
+  // if (status === "authenticated") {
+    return (
+      <MainLayout containerSize="md">
+        <CreateCollectionModal
+          isModalOpen={isCollectionModalOpen}
+          setModalOpen={setCollectionModalOpen}
+          form={collectionForm}
+          onConfirm={collectionForm.onSubmit((values) => {
+            // TODO: optimistic update
+            mutation.mutate({ name: values.name }, {
+              onSuccess: () => {
+                setCollectionModalOpen(false);
+                collectionForm.reset();
+                showNotification({
+                  title: "Collection created",
+                  message: "Collection created successfully",
+                })
+              },
 
-      <Group position="apart" align="center" my="xl">
-        <Title align="center">My Collections</Title>
+              onError: (error) => {
+                showNotification({
+                  title: "Error creating collection",
+                  message: error.message,
+                  color: "red"
+                })
+              },
+              onSettled: () => {
+                utils.collection.getAll.invalidate();
+              }
+            })
+          }, collectionForm.handleEditCollectionError)}
+          onCancel={(e) => {
+            setCollectionModalOpen(false)
+            collectionForm.reset();
+          }}
+        />
+        {/* <CreateHintModal 
+          isModalOpen={isHintModalOpen} setModalOpen={setHintModalOpen} 
+          onConfirm = {(e) => {}}
+          onCancel = {() => { setHintModalOpen(false); }}
+        /> */}
 
-        {/* TODO: show cmd or ctrl depending on OS */}
-        <Group>
-          {/* <Tooltip label="Create Hint ('C')">
-            <Button variant="subtle" color="indigo.5" leftIcon={<IconFilePlus size={18} />} onClick={() => setHintModalOpen(true)}>
-              Create Hint
-            </Button>
-          </Tooltip> */}
-          <Tooltip label="Create Collection ('O')">
+        <Group position="apart" align="center" my="xl">
+          <Title align="center">My Collections</Title>
 
-            <Button
-              color="indigo.8"
-              leftIcon={<IconFolderPlus size={18} />}
-              onClick={() => {
-                setCollectionModalOpen(true);
-              }}
-            >
-              Create Collection
-            </Button>
-          </Tooltip>
+          {/* TODO: show cmd or ctrl depending on OS */}
+          <Group>
+            {/* <Tooltip label="Create Hint ('C')">
+              <Button variant="subtle" color="indigo.5" leftIcon={<IconFilePlus size={18} />} onClick={() => setHintModalOpen(true)}>
+                Create Hint
+              </Button>
+            </Tooltip> */}
+            <Tooltip label="Create Collection ('O')">
+
+              <Button
+                color="indigo.8"
+                leftIcon={<IconFolderPlus size={18} />}
+                onClick={() => {
+                  setCollectionModalOpen(true);
+                }}
+              >
+                Create Collection
+              </Button>
+            </Tooltip>
+          </Group>
         </Group>
-      </Group>
 
-      <SearchBar mb="xl" />
+        <SearchBar mb="xl" />
 
 
-      {isLoading ? (
-        <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Loader color="indigo" />
-        </Box>
-      ) : <CollectionsList collections={collections} classes={classes} />}
+        {isLoading ? (
+          <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <Loader color="indigo" />
+          </Box>
+        ) : <CollectionsList collections={collections} classes={classes} />}
 
-    </MainLayout>
-  )
+      </MainLayout>
+    )
+  // }
+
 }
 
 // TODO: change any to correct type
