@@ -9,6 +9,7 @@ import { IconArrowNarrowRight, IconFilePlus, IconLogin } from "@tabler/icons";
 import Logo from "./components/Logo";
 import MainHeader from "./components/MainHeader";
 import MainLayout from "./components/layouts/MainLayout";
+import { useMediaQuery } from "@mantine/hooks";
 
 const useStyles = createStyles((theme) => ({
   mainContent: {
@@ -24,10 +25,11 @@ const useStyles = createStyles((theme) => ({
 
 const Home: NextPage = () => {
   const { classes, cx } = useStyles();
+  const largeScreen = useMediaQuery('(min-width: 900px)');
 
   return (
     <MainLayout containerSize="sm" className={classes.mainContent}>
-      <Title order={1} weight="black" size="72px" align="center">
+      <Title order={1} weight="black" size={largeScreen ? "72px" : "48px"} align="center">
         Virtual Sticky Notes for Power Users
       </Title>
 

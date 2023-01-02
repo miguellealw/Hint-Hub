@@ -27,7 +27,17 @@ const MainHeader = () => {
           {
             session &&
             <Group>
-              <Text variant="gradient" gradient={{ from: 'indigo', to: 'cyan', deg: 45 }} fw="bold"> {session.user?.name} </Text>
+              <Text
+                style={{
+                  maxWidth: "100px",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+                color="indigo.5"
+                fw="bold">
+                {session.user?.name} 
+              </Text>
 
               <Tooltip label="My Collections" position="bottom">
                 <Link href="/collections">
@@ -57,28 +67,12 @@ const LoginButton: React.FC = () => {
   const { data: sessionData } = useSession();
 
   return (
-    // <Button
-    //   // className={styles.loginButton}
-    //   leftIcon={<IconLogin size={14} />}
-    //   color="indigo.8"
-    //   onClick={sessionData ? () => signOut() : () => signIn()}
-    //   variant="outline"
-    // >
-    //   {sessionData ? "Sign out" : "Sign in"}
-    // </Button>
-
-
     <Tooltip label={!sessionData ? "Log In" : "Log Out"}>
       <Box
         onClick={sessionData ? () => signOut() : () => signIn()}
         style={{ cursor: "pointer" }}
       >
-        {!sessionData ? (
-          <IconLogin size={20} />
-        ) : (
-          <IconLogout size={20} />
-        )
-        }
+        {!sessionData ? <IconLogin size={20} /> : <IconLogout size={20} />}
       </Box >
 
     </Tooltip>
