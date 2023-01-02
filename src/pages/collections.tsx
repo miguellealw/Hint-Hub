@@ -9,7 +9,7 @@ import CreateCollectionModal from "./components/Modals/CollectionModal";
 import { trpc } from "../utils/trpc";
 import { type Collection } from "@prisma/client";
 import Link from "next/link";
-import { useHotkeys } from "@mantine/hooks";
+import { useHotkeys, useMediaQuery } from "@mantine/hooks";
 import useCollectionForm from "../hooks/useCollectionForm";
 import useUnauthed from "../hooks/useUnauthed";
 import { useCreateCollection } from "../hooks/collectionHooks";
@@ -135,10 +135,11 @@ const Collections: NextPage = () => {
 
 // TODO: change any to correct type
 const CollectionsList = ({ collections, classes }: { collections: Collection[] | undefined, classes: any }) => {
+  const largeScreen = useMediaQuery('(min-width: 900px)');
 
   return (
     <ul style={{ paddingLeft: 0 }}>
-      <SimpleGrid cols={3}>
+      <SimpleGrid cols={largeScreen ? 3 : 1}>
         {collections?.length === 0 ?
           <Text align="center" c="gray.5">You don&apos;t have any collections yet.</Text> :
           collections?.map(collection => (

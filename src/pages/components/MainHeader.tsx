@@ -1,7 +1,7 @@
 
-import { Container, Header, Button, Group, Title, Center, createStyles, Text, Tooltip, Box } from "@mantine/core";
+import { Container, Header, Button, Group, Title, Center, createStyles, Text, Tooltip, Box, Divider } from "@mantine/core";
 import { useSpotlight } from "@mantine/spotlight";
-import { IconBoxMultiple, IconCommand, IconLogin } from "@tabler/icons";
+import { IconBoxMultiple, IconCommand, IconLogin, IconLogout } from "@tabler/icons";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import Logo from "./Logo";
@@ -27,7 +27,7 @@ const MainHeader = () => {
           {
             session &&
             <Group>
-              <Text variant="gradient" gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}> {session.user?.name} </Text>
+              <Text variant="gradient" gradient={{ from: 'indigo', to: 'cyan', deg: 45 }} fw="bold"> {session.user?.name} </Text>
 
               <Tooltip label="My Collections" position="bottom">
                 <Link href="/collections">
@@ -39,12 +39,13 @@ const MainHeader = () => {
 
               {/* TODO: change command icon on windows */}
               <Tooltip label="Command Palette (⌘ + K)" position="bottom">
-                <Box onClick={() => spotlight.openSpotlight()} style={{cursor: "pointer"}}>
+                <Box onClick={() => spotlight.openSpotlight()} style={{ cursor: "pointer" }}>
                   <IconCommand size={20} />
                 </Box>
               </Tooltip>
             </Group>
           }
+          <Divider orientation="vertical" />
           <LoginButton />
         </Group>
       </Container>
@@ -56,15 +57,31 @@ const LoginButton: React.FC = () => {
   const { data: sessionData } = useSession();
 
   return (
-    <Button
-      // className={styles.loginButton}
-      leftIcon={<IconLogin size={14} />}
-      color="indigo.8"
-      onClick={sessionData ? () => signOut() : () => signIn()}
-      variant="outline"
-    >
-      {sessionData ? "Sign out" : "Sign in"}
-    </Button>
+    // <Button
+    //   // className={styles.loginButton}
+    //   leftIcon={<IconLogin size={14} />}
+    //   color="indigo.8"
+    //   onClick={sessionData ? () => signOut() : () => signIn()}
+    //   variant="outline"
+    // >
+    //   {sessionData ? "Sign out" : "Sign in"}
+    // </Button>
+
+
+    <Tooltip label={!sessionData ? "Log In" : "Log Out"}>
+      <Box
+        onClick={sessionData ? () => signOut() : () => signIn()}
+        style={{ cursor: "pointer" }}
+      >
+        {!sessionData ? (
+          <IconLogin size={20} />
+        ) : (
+          <IconLogout size={20} />
+        )
+        }
+      </Box >
+
+    </Tooltip>
   );
 };
 

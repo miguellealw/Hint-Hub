@@ -23,7 +23,7 @@ const useCreateCollection = ({ onMutateCb, onSuccessCb, onErrorCb }: {
       // Cancel outgoing fetches (so they don't overwrite our optimistic update)
       await utils.collection.getAll.invalidate();
 
-      // Get the data from the queryCache
+      // Get the data from the queryCache to snapshot the previous value
       const prevData = utils.collection.getAll.getData();
 
       // Optimistically update the data with our new post

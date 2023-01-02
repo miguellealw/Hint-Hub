@@ -101,6 +101,7 @@ const SingleCollection: NextPage = () => {
           <CreateCollectionModal
             isModalOpen={isCollectionModalOpen}
             setModalOpen={setCollectionModalOpen}
+            onClose={() => { setCollectionModalOpen(false) }}
             isEditing
             form={collectionForm}
             onConfirm={collectionForm.onSubmit((values) => {
