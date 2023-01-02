@@ -24,7 +24,6 @@ const SingleCollection: NextPage = () => {
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
   // const SearchBarRef = useRef<HTMLInputElement>(null);
   const [currentCollectionName, setCurrentCollectionName] = useState("");
-  const largeScreen = useMediaQuery('(min-width: 900px)');
 
   const { status } = useUnauthed();
 
@@ -256,7 +255,7 @@ const SingleCollection: NextPage = () => {
             (<Text fz="sm" c="gray.6">No hints in this collection.</Text>) :
             (
               <ul style={{ paddingLeft: 0 }}>
-                <SimpleGrid cols={largeScreen ? 2 : 1} spacing="xl">
+                <SimpleGrid cols={1} spacing="xl">
                   {
                     hints?.map(hint => (
                       <HintCard
