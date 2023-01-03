@@ -1,5 +1,5 @@
 import { RichTextEditor, Link } from '@mantine/tiptap';
-import { useEditor } from '@tiptap/react';
+import { BubbleMenu, useEditor } from '@tiptap/react';
 import Highlight from '@tiptap/extension-highlight';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -44,7 +44,7 @@ export default function RREditor({ ...props }) {
       props.form.setFieldValue("content", editor.getHTML())
     },
     onCreate: ({ editor }) => {
-      props.form.setValues({...props.initialValues})
+      props.form.setValues({ ...props.initialValues })
       editor.commands.setContent(props.initialValues.content)
     }
 
@@ -53,7 +53,7 @@ export default function RREditor({ ...props }) {
 
   return (
     <RichTextEditor editor={editor} placeholder="hint here" {...props} >
-      <RichTextEditor.Toolbar sticky stickyOffset={60}>
+      <RichTextEditor.Toolbar sticky>
         <RichTextEditor.ControlsGroup>
           <RichTextEditor.Bold />
           <RichTextEditor.Italic />
