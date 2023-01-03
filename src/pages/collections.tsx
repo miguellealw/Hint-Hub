@@ -2,10 +2,10 @@ import { useRef, useState } from "react";
 import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader, Box } from "@mantine/core"
 import { IconFolderPlus } from "@tabler/icons";
 import { type NextPage } from "next";
-import MainLayout from "./components/layouts/MainLayout";
-import { InputWithButton as SearchBar } from "./components/InputWithButton";
+import MainLayout from "../components/layouts/MainLayout";
+import SearchBar from "../components/InputWithButton";
 // import CreateHintModal from "./components/CreateHintModal";
-import CreateCollectionModal from "./components/Modals/CollectionModal";
+import CreateCollectionModal from "../components/Modals/CollectionModal";
 import { trpc } from "../utils/trpc";
 import { type Collection } from "@prisma/client";
 import Link from "next/link";

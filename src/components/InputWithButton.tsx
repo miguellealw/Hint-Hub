@@ -32,4 +32,4 @@ const InputWithButton = React.forwardRef((props: TextInputProps, ref) => {
 
 InputWithButton.displayName = 'InputWithButton';
 
-export { InputWithButton };
+export default InputWithButton;

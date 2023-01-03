@@ -1,17 +1,17 @@
 import { Box, Button, Group, Loader, SimpleGrid, Title, Tooltip, Text } from "@mantine/core"
 import { IconEdit, IconFilePlus, IconTrash } from "@tabler/icons";
 import { type NextPage } from "next";
-import { InputWithButton as SearchBar } from "../components/InputWithButton";
-import MainLayout from "../components/layouts/MainLayout";
+import SearchBar from "../../components/InputWithButton";
+import MainLayout from "../../components/layouts/MainLayout";
 import { useRef, useState } from 'react';
-import CreateHintModal from "../components/CreateHintModal";
+import CreateHintModal from "../../components/CreateHintModal";
 import { useHotkeys } from "@mantine/hooks";
-import HintCard from "../components/HintCard";
+import HintCard from "../../components/HintCard";
 import { trpc } from "../../utils/trpc";
 import { useRouter } from "next/router";
-import { openDeleteConfirmModal } from "../components/Modals/openConfirmModals";
+import { openDeleteConfirmModal } from "../../utils/openConfirmModals";
 import { showNotification } from "@mantine/notifications";
-import CreateCollectionModal from "../components/Modals/CollectionModal";
+import CreateCollectionModal from "../../components/Modals/CollectionModal";
 import { useDeleteCollection, useUpdateCollection } from "../../hooks/collectionHooks";
 import useHintForm from "../../hooks/useHintForm";
 import useCollectionForm from "../../hooks/useCollectionForm";

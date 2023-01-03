@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import Link from "next/link";
 import { Button, Title, createStyles, Text } from "@mantine/core";
 import { IconArrowNarrowRight } from "@tabler/icons";
-import MainLayout from "./components/layouts/MainLayout";
+import MainLayout from "../components/layouts/MainLayout";
 import { useMediaQuery } from "@mantine/hooks";
 
 const useStyles = createStyles(() => ({

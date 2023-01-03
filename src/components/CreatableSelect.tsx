@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Select, type SelectProps, type SelectItem } from '@mantine/core';
-import { trpc } from '../../utils/trpc';
+import { trpc } from '../utils/trpc';
 
 type CreateableSelectProps = {
   handleCollectionChange: (name: string, value: string) => void
 } & SelectProps;
 
-export function CreatableSelect({ handleCollectionChange, ...props }: CreateableSelectProps) {
+function CreatableSelect({ handleCollectionChange, ...props }: CreateableSelectProps) {
   // TODO: move the colections data up to [id], since I will need it to send to backend
   const [data, setData] = useState<SelectItem[] | []>([]);
 
@@ -48,3 +48,5 @@ export function CreatableSelect({ handleCollectionChange, ...props }: Createable
     />
   );
 }
+
+export default CreatableSelect;
