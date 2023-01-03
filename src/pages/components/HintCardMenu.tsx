@@ -1,6 +1,5 @@
-import { Menu, Button, Text } from '@mantine/core';
-import { IconSettings, IconSearch, IconPhoto, IconMessageCircle, IconTrash, IconArrowsLeftRight, IconEdit, IconDots, IconDotsVertical, IconCopy, IconShare } from '@tabler/icons';
-import { MouseEventHandler } from 'react';
+import { Menu } from '@mantine/core';
+import { IconTrash, IconEdit, IconDotsVertical, IconCopy } from '@tabler/icons';
 
 type HintCardMenuProps = {
   // TODO: figure out how to make a dynamic type for classes

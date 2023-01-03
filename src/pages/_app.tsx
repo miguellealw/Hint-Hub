@@ -9,8 +9,8 @@ import "../styles/globals.css";
 import Head from "next/head";
 import { ModalsProvider } from "@mantine/modals";
 import { NotificationsProvider } from "@mantine/notifications";
-import { SpotlightAction, SpotlightProvider } from "@mantine/spotlight";
-import { IconBoxMultiple, IconDashboard, IconFilePlus, IconFileText, IconFolderPlus, IconHome, IconListSearch, IconReportSearch, IconSearch } from "@tabler/icons";
+import { type SpotlightAction, SpotlightProvider } from "@mantine/spotlight";
+import { IconBoxMultiple, IconFilePlus, IconFileText, IconFolderPlus, IconListSearch, IconReportSearch, IconSearch } from "@tabler/icons";
 
 const actions: SpotlightAction[] = [
   {

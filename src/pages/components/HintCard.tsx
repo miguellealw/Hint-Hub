@@ -30,7 +30,7 @@ const useStyles = createStyles(theme => ({
 }))
 
 export default function HintCard({ hint, onDelete, onEdit, ...props }: HintCardProps) {
-  const { classes, cx } = useStyles();
+  const { classes } = useStyles();
   const clipboard = useClipboard({ timeout: 500 });
   return (
     <li {...props} style={{ listStyleType: "none", position: "relative" }}>

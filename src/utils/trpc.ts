@@ -1,6 +1,6 @@
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
-import { inferReactQueryProcedureOptions } from "@trpc/react-query";
+import type { inferReactQueryProcedureOptions } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
 

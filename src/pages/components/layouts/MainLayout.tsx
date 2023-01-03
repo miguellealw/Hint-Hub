@@ -1,5 +1,4 @@
-import { Container, createStyles, MantineNumberSize } from '@mantine/core'
-import { useSession } from 'next-auth/react';
+import { Container, type MantineNumberSize } from '@mantine/core'
 import MainHeader from '../MainHeader'
 
 

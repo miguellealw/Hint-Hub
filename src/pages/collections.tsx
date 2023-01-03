@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader, Box } from "@mantine/core"
-import { IconFilePlus, IconFolderPlus } from "@tabler/icons";
+import { IconFolderPlus } from "@tabler/icons";
 import { type NextPage } from "next";
 import MainLayout from "./components/layouts/MainLayout";
 import { InputWithButton as SearchBar } from "./components/InputWithButton";
@@ -39,7 +39,6 @@ const Collections: NextPage = () => {
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
   const { status } = useUnauthed();
   const [searchValue, setSearchValue] = useState("");
-  const utils = trpc.useContext();
   const searchBarRef = useRef<HTMLInputElement>(null);
 
   const collectionForm = useCollectionForm("");
@@ -93,7 +92,7 @@ const Collections: NextPage = () => {
         onConfirm={collectionForm.onSubmit((values) => {
           mutation.mutate({ name: values.name })
         }, collectionForm.handleEditCollectionError)}
-        onCancel={(e) => {
+        onCancel={() => {
           setCollectionModalOpen(false)
           collectionForm.reset();
         }}
@@ -130,7 +129,7 @@ const Collections: NextPage = () => {
       <SearchBar mb="xl"
         ref={searchBarRef}
         value={searchValue}
-        onChange={(e) => { setSearchValue(e.target.value) }}
+        onChange={(e) => { setSearchValue(e.currentTarget.value) }}
       />
 
 

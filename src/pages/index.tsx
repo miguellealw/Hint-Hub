@@ -1,17 +1,11 @@
-import styles from "./index.module.css";
 import { type NextPage } from "next";
-import Head from "next/head";
 import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
-import { Container, Header, Button, Title, createStyles, Text } from "@mantine/core";
-import { trpc } from "../utils/trpc";
-import { IconArrowNarrowRight, IconFilePlus, IconLogin } from "@tabler/icons";
-import Logo from "./components/Logo";
-import MainHeader from "./components/MainHeader";
+import { Button, Title, createStyles, Text } from "@mantine/core";
+import { IconArrowNarrowRight } from "@tabler/icons";
 import MainLayout from "./components/layouts/MainLayout";
 import { useMediaQuery } from "@mantine/hooks";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(() => ({
   mainContent: {
     display: "flex",
     justifyContent: "center",
@@ -24,7 +18,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const Home: NextPage = () => {
-  const { classes, cx } = useStyles();
+  const { classes } = useStyles();
   const largeScreen = useMediaQuery('(min-width: 900px)');
 
   return (

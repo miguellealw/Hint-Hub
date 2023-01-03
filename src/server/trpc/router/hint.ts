@@ -37,19 +37,6 @@ export const hintRouter = router({
     });
   }),
 
-  getBySearch: protectedProcedure
-    .input(z.object({ searchValue: z.string(), collectionId: z.string() }))
-    .query(({ input, ctx }) => {
-      return ctx.prisma.hint.findMany({
-        where: {
-          collectionId: input.collectionId,
-          title: {
-            search: input.searchValue
-          }
-        }
-      })
-    }),
-
   create: protectedProcedure
     .input(
       z.object({

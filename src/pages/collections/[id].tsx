@@ -5,7 +5,7 @@ import { InputWithButton as SearchBar } from "../components/InputWithButton";
 import MainLayout from "../components/layouts/MainLayout";
 import { useRef, useState } from 'react';
 import CreateHintModal from "../components/CreateHintModal";
-import { useHotkeys, useMediaQuery } from "@mantine/hooks";
+import { useHotkeys } from "@mantine/hooks";
 import HintCard from "../components/HintCard";
 import { trpc } from "../../utils/trpc";
 import { useRouter } from "next/router";
@@ -50,7 +50,7 @@ const SingleCollection: NextPage = () => {
   because it will be used in the form for editing
   */
   const {
-    data: currentCollection,
+    // data: currentCollection,
     isLoading: isCurrentCollectionLoading,
     isError: isCurrentCollectionError,
     isSuccess: isCurrentCollectionSuccess
