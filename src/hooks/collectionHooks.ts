@@ -15,6 +15,7 @@ const useCreateCollection = ({ onMutateCb, onSuccessCb, onErrorCb }: {
   const utils = trpc.useContext();
 
   return trpc.collection.create.useMutation({
+    /*
     onMutate: async (newCollection) => {
       // setCollectionModalOpen(false);
       onMutateCb();
@@ -26,11 +27,18 @@ const useCreateCollection = ({ onMutateCb, onSuccessCb, onErrorCb }: {
       const prevData = utils.collection.getAll.getData();
 
       // Optimistically update the data with our new post
-      utils.collection.getAll.setData({ searchValue: "" }, (old) => [...old, newCollection]);
+      utils.collection.getAll.setData(undefined, (old) => {
+        // if (!old) return newCollection;
+        if (old)
+          return [...old, newCollection]
+
+        return [newCollection];
+      });
 
       // Return the previous data so we can revert if something goes wrong
       return { prevData };
     },
+    */
     onSuccess: (newCollection, context) => {
       onSuccessCb();
 
@@ -43,12 +51,9 @@ const useCreateCollection = ({ onMutateCb, onSuccessCb, onErrorCb }: {
       onErrorCb(newCollection);
 
       // If something goes wrong, use the context returned from onMutate to roll back
-      utils.collection.getAll.setData(context.prevData);
-      showNotification({
-        title: "Error creating collection",
-        message: err.message,
-        color: "red"
-      })
+      // utils.collection.getAll.setData(undefined, context?.prevData);
+
+      showNotification({ title: "Error creating collection", message: err.message, color: "red" })
     },
     onSettled: () => {
       utils.collection.getAll.invalidate();
