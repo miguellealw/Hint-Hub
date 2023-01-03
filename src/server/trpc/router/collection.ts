@@ -12,12 +12,20 @@ export const collectionRouter = router({
       });
     }),
 
-  getAll: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.collection.findMany({
-      where: { userId: ctx.session.user.id }
-    }
-    );
-  }),
+  getAll: protectedProcedure
+    .input(z.object({ searchValue: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.collection.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          name: {
+            contains: input.searchValue ?? "",
+            mode: "insensitive",
+          }
+        }
+      }
+      );
+    }),
 
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1, "Name is required") }))

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader, Box } from "@mantine/core"
 import { IconFilePlus, IconFolderPlus } from "@tabler/icons";
 import { type NextPage } from "next";
@@ -38,21 +38,30 @@ const useStyles = createStyles((theme) => ({
 const Collections: NextPage = () => {
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
   const { status } = useUnauthed();
+  const [searchValue, setSearchValue] = useState("");
   const utils = trpc.useContext();
+  const searchBarRef = useRef<HTMLInputElement>(null);
 
   const collectionForm = useCollectionForm("");
 
   const { classes } = useStyles();
   useHotkeys([
     // ["c", () => setHintModalOpen(true)],
-    ["o", () => setCollectionModalOpen(true)]
-    // FIXME: SearchBarRef is null
-    // ["/", () => SearchBarRef.current?.focus()]
+    ["o", () => setCollectionModalOpen(true)],
+    ["/", () => searchBarRef.current?.focus()]
   ])
 
 
   // trpc
-  const { data: collections, isLoading } = trpc.collection.getAll.useQuery();
+  const { 
+    data: collections, 
+    isLoading: isLoadingCollections, 
+    isSuccess: isSuccessCollections 
+  } = trpc.collection.getAll.useQuery({
+    searchValue
+  }, {
+    queryKey: ["collection.getAll", { searchValue }],
+  });
   const mutation = useCreateCollection({
     onMutateCb: () => { setCollectionModalOpen(false) },
     onSuccessCb: () => { setCollectionModalOpen(false) },
@@ -62,7 +71,7 @@ const Collections: NextPage = () => {
     }
   });
 
-  if (status === "loading" || isLoading) {
+  if (status === "loading") {
     return (
       <Box sx={{ width: "100vw", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <Loader color="indigo" />
@@ -118,10 +127,14 @@ const Collections: NextPage = () => {
         </Group>
       </Group>
 
-      <SearchBar mb="xl" />
+      <SearchBar mb="xl"
+        ref={searchBarRef}
+        value={searchValue}
+        onChange={(e) => { setSearchValue(e.target.value) }}
+      />
 
 
-      {isLoading ? (
+      {isLoadingCollections && !isSuccessCollections ? (
         <Box style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Loader color="indigo" />
         </Box>
