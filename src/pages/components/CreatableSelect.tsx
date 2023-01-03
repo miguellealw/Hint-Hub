@@ -2,16 +2,16 @@ import { useState } from 'react';
 import { Select, type SelectProps, type SelectItem } from '@mantine/core';
 import { trpc } from '../../utils/trpc';
 
-// interface CreateableSelectProps = {
-//   handleCollectionChange: (value: string) => void;
-// } extends SelectProps;
+type CreateableSelectProps = {
+  handleCollectionChange: (name: string, value: string) => void
+} & SelectProps;
 
-export function CreatableSelect({ handleCollectionChange, ...props }: SelectProps) {
+export function CreatableSelect({ handleCollectionChange, ...props }: CreateableSelectProps) {
   // TODO: move the colections data up to [id], since I will need it to send to backend
   const [data, setData] = useState<SelectItem[] | []>([]);
 
   const { data: collections, isSuccess: isGetSuccess } = trpc.collection.getAll.useQuery(
-    undefined,
+    { searchValue: "" },
     {
       onSuccess(collections) {
         const labelValues = collections.map(coll => ({ value: coll.id, label: coll.name, id: coll.id }))
@@ -37,7 +37,7 @@ export function CreatableSelect({ handleCollectionChange, ...props }: SelectProp
       getCreateLabel={(query) => `+ Create ${query}`}
       // onChange={(value) => handleCollectionChange(value, id)}
       // TODO: figure out how to get label here
-      onChange={(value) => handleCollectionChange(name, value)}
+      // onChange={(value) => handleCollectionChange(name, value)}
       onCreate={(query) => {
         const item = { value: query, label: query };
         mutate({ name: query }, {
