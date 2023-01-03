@@ -1,18 +1,17 @@
 import { TextInput, type TextInputProps, ActionIcon, useMantineTheme } from '@mantine/core';
 import { IconSearch, IconArrowRight, IconArrowLeft } from '@tabler/icons';
+import React from 'react';
 
-type InputWithButtonProps = TextInputProps & {
-  // ref?: React.RefObject<HTMLInputElement>;
-}
-
-export function InputWithButton(props: InputWithButtonProps) {
+const InputWithButton = React.forwardRef((props: TextInputProps, ref) => {
   const theme = useMantineTheme();
 
   return (
     <TextInput
+      {...props}
       icon={<IconSearch size={18} stroke={1.5} />}
       radius="xl"
       size="md"
+      aria-label="Search hints (Keyboard shortcut: /)"
       rightSection={
         // <ActionIcon size={32} radius="xl" color={theme.primaryColor} variant="filled">
         <ActionIcon size={32} radius="xl" color="indigo.8" variant="filled">
@@ -25,8 +24,12 @@ export function InputWithButton(props: InputWithButtonProps) {
       }
       placeholder="Search hints ('/')"
       rightSectionWidth={42}
-      // TODO: fix ref with ForwardRef or somn
-      {...props}
+      // IDK if this is right
+      ref={ref as React.RefObject<HTMLInputElement>}
     />
   );
-}
+})
+
+InputWithButton.displayName = 'InputWithButton';
+
+export { InputWithButton };

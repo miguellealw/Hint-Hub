@@ -14,11 +14,10 @@ type HintCardProps = {
 
 const useStyles = createStyles(theme => ({
   card: {
-    backgroundColor: theme.colors.gray[1],
+    // backgroundColor: theme.colors.gray[0],
     padding: theme.spacing.sm,
     borderRadius: theme.radius.sm,
     border: `1px solid ${theme.colors.gray[2]}`,
-    // lineHeight: 1.5,
     position: "relative"
   },
   iconEdit: {
@@ -34,7 +33,6 @@ export default function HintCard({ hint, onDelete, onEdit, ...props }: HintCardP
   const { classes, cx } = useStyles();
   const clipboard = useClipboard({ timeout: 500 });
   return (
-    // <Card shadow="sm" padding="xl" radius="md" my="md">
     <li {...props} style={{ listStyleType: "none", position: "relative" }}>
       <Group position="apart" align="center" mb="sm">
         <Title order={6}>{hint.title}</Title>

@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 import { router, protectedProcedure } from "../trpc";
 
 export const hintRouter = router({
@@ -14,13 +13,28 @@ export const hintRouter = router({
     }),
 
   getAllByCollectionId: protectedProcedure
-    .input(z.object({ collectionId: z.string() }))
+    .input(z.object({ collectionId: z.string(), searchValue: z.string().nullish() }))
     .query(({ input, ctx }) => {
+      // search hints
+      if (input.searchValue) {
+        return ctx.prisma.hint.findMany({
+          where: {
+            collectionId: input.collectionId,
+            userId: ctx.session.user.id,
+            title: {
+              contains: input.searchValue,
+              mode: "insensitive",
+            }
+          },
+        });
+      }
+
+      // get all hints
       return ctx.prisma.hint.findMany({
         where: {
           collectionId: input.collectionId,
-          userId: ctx.session.user.id
-        }
+          userId: ctx.session.user.id,
+        },
       });
     }),
 
@@ -29,6 +43,19 @@ export const hintRouter = router({
       where: { userId: ctx.session.user.id }
     });
   }),
+
+  getBySearch: protectedProcedure
+    .input(z.object({ searchValue: z.string(), collectionId: z.string() }))
+    .query(({ input, ctx }) => {
+      return ctx.prisma.hint.findMany({
+        where: {
+          collectionId: input.collectionId,
+          title: {
+            search: input.searchValue
+          }
+        }
+      })
+    }),
 
   create: protectedProcedure
     .input(

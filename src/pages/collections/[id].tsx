@@ -3,7 +3,7 @@ import { IconEdit, IconFilePlus, IconTrash } from "@tabler/icons";
 import { type NextPage } from "next";
 import { InputWithButton as SearchBar } from "../components/InputWithButton";
 import MainLayout from "../components/layouts/MainLayout";
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import CreateHintModal from "../components/CreateHintModal";
 import { useHotkeys, useMediaQuery } from "@mantine/hooks";
 import HintCard from "../components/HintCard";
@@ -22,8 +22,9 @@ import useUnauthed from "../../hooks/useUnauthed";
 const SingleCollection: NextPage = () => {
   const [isHintModalOpen, setHintModalOpen] = useState(false);
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
-  // const SearchBarRef = useRef<HTMLInputElement>(null);
+  const searchBarRef = useRef<HTMLInputElement>(null);
   const [currentCollectionName, setCurrentCollectionName] = useState("");
+  const [searchValue, setSearchValue] = useState("");
 
   const { status } = useUnauthed();
 
@@ -66,15 +67,21 @@ const SingleCollection: NextPage = () => {
   const {
     data: hints,
     isError: isHintsError,
-  } = trpc.hint.getAllByCollectionId.useQuery({ collectionId: currentCollectionId });
+    isLoading: isHintsLoading,
+  } = trpc.hint.getAllByCollectionId.useQuery({
+    collectionId: currentCollectionId,
+    searchValue
+  }, {
+    queryKey: ["hint.getAllByCollectionId", { collectionId: currentCollectionId, searchValue }],
+  });
+
 
   const utils = trpc.useContext();
 
   useHotkeys([
     ["c", () => setHintModalOpen(true)],
     ["o", () => setCollectionModalOpen(true)],
-    // FIXME: SearchBarRef is null
-    // ["/", () => SearchBarRef.current?.focus()]
+    ["/", () => searchBarRef.current?.focus()]
   ])
 
   if (status === "loading") {
@@ -164,7 +171,7 @@ const SingleCollection: NextPage = () => {
                     showNotification({ title: "Error updating hint", message: error.message, color: "red" })
                   },
                   onSettled: () => {
-                    utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId });
+                    utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId, searchValue: "" });
                   }
                 })
               } else {
@@ -182,7 +189,7 @@ const SingleCollection: NextPage = () => {
                     showNotification({ title: "Error creating hint", message: error.message, color: "red" })
                   },
                   onSettled: () => {
-                    utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId });
+                    utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId, searchValue: "" });
                   }
                 })
               }
@@ -200,7 +207,7 @@ const SingleCollection: NextPage = () => {
             <Group align="center">
               <Title align="center">{currentCollectionName}</Title>
 
-              <Tooltip label="Edit Collection">
+              <Tooltip label="Edit Collection ('O')">
                 <span onClick={() => { setCollectionModalOpen(true) }}>
                   <IconEdit size={20} style={{ cursor: "pointer" }} />
                 </span>
@@ -249,43 +256,55 @@ const SingleCollection: NextPage = () => {
           </Group>
 
           {/* <SearchBar ref={SearchBarRef} mb="xl" /> */}
-          <SearchBar mb="xl" />
+          <SearchBar
+            mb="xl"
+            value={searchValue}
+            ref={searchBarRef}
+            onChange={(e) => { setSearchValue(e.currentTarget.value) }}
+          />
 
-          {hints?.length === 0 ?
-            (<Text fz="sm" c="gray.6">No hints in this collection.</Text>) :
-            (
-              <ul style={{ paddingLeft: 0 }}>
-                <SimpleGrid cols={1} spacing="xl">
-                  {
-                    hints?.map(hint => (
-                      <HintCard
-                        key={hint.id}
-                        hint={hint}
-                        onEdit={() => {
-                          setHintModalOpen(true)
-                          setSelectedHint(hint);
-                        }}
-                        onDelete={() => {
-                          deleteHintMutation.mutate({ id: hint.id }, {
-                            onSuccess: () => {
-                              showNotification({ message: "Hint deleted", color: "red" })
-                              utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId });
-                            },
-                            onError: (error) => {
-                              showNotification({ message: error.message, color: "red" })
-                            }
-                          })
-                        }}
-                      />
-                    ))
-                  }
-                </SimpleGrid>
-              </ul>
-            )}
+          {isHintsLoading ? (<Text size="sm" color="gray.7">Loading hints...</Text>) : (
+            <>
+              {
+                hints?.length === 0 ?
+                  (<Text fz="sm" c="gray.6">No hints in this collection.</Text>) :
+                  (
+                    <ul style={{ paddingLeft: 0 }}>
+                      <SimpleGrid cols={1} spacing="xl">
+                        {
+                          hints?.map(hint => (
+                            <HintCard
+                              key={hint.id}
+                              hint={hint}
+                              onEdit={() => {
+                                setHintModalOpen(true)
+                                setSelectedHint(hint);
+                              }}
+                              onDelete={() => {
+                                deleteHintMutation.mutate({ id: hint.id }, {
+                                  onSuccess: () => {
+                                    showNotification({ message: "Hint deleted", color: "red" })
+                                    utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId, searchValue: "" });
+                                  },
+                                  onError: (error) => {
+                                    showNotification({ message: error.message, color: "red" })
+                                  }
+                                })
+                              }}
+                            />
+                          ))
+                        }
+                      </SimpleGrid>
+                    </ul>
+                  )
+              }
+            </>
+          )}
 
         </>
-      )}
-    </MainLayout>
+      )
+      }
+    </MainLayout >
   )
 
 }
