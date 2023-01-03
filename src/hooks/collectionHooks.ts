@@ -1,12 +1,11 @@
 import { showNotification } from "@mantine/notifications";
-import { UseTRPCQueryOptions } from "@trpc/react-query/shared";
+// import { UseTRPCQueryOptions } from "@trpc/react-query/shared";
 import { trpc } from "../utils/trpc";
 
 
-const useGetCollectionsQuery = () => {
-  return trpc.collection.getAll.useQuery();
-
-}
+// const useGetCollectionsQuery = () => {
+//   return trpc.collection.getAll.useQuery();
+// }
 
 const useCreateCollection = ({ onMutateCb, onSuccessCb, onErrorCb }: {
   onMutateCb: () => void,
@@ -27,7 +26,7 @@ const useCreateCollection = ({ onMutateCb, onSuccessCb, onErrorCb }: {
       const prevData = utils.collection.getAll.getData();
 
       // Optimistically update the data with our new post
-      utils.collection.getAll.setData(undefined, (old) => [...old, newCollection]);
+      utils.collection.getAll.setData({ searchValue: "" }, (old) => [...old, newCollection]);
 
       // Return the previous data so we can revert if something goes wrong
       return { prevData };
