@@ -1,10 +1,10 @@
-import type { FormEvent, SyntheticEvent } from 'react';
+import { FormEvent, SyntheticEvent, useState } from 'react';
 import { Modal, Button, Group, TextInput } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
+import LoadingOverlay from '../LoadingOverlay';
 
 type CreateHintModalProps = {
   isModalOpen: boolean;
-  setModalOpen: (value: boolean) => void;
   currentName?: string,
 
   onConfirm: (e: FormEvent<HTMLFormElement>) => void;
@@ -13,17 +13,18 @@ type CreateHintModalProps = {
 
   form: UseFormReturnType<{ name: string }>,
   isEditing?: boolean,
+  isCollectionsLoading: boolean
 }
 
 
 export default function CreateCollectionModal({
   isModalOpen,
-  setModalOpen,
   onConfirm,
   onCancel,
   onClose,
   form,
-  isEditing
+  isEditing,
+  isCollectionsLoading,
 }: CreateHintModalProps) {
   return (
     <Modal
@@ -32,6 +33,7 @@ export default function CreateCollectionModal({
       title={`${isEditing ? "Update" : "Create"} Collection`}
       size="md"
     >
+      <LoadingOverlay visible={isCollectionsLoading} />
       <form onSubmit={onConfirm}>
         <TextInput
           label="Collection Name"

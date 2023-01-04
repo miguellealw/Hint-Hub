@@ -17,6 +17,7 @@ import useHintForm from "../../hooks/useHintForm";
 import useCollectionForm from "../../hooks/useCollectionForm";
 import type { Hint } from "@prisma/client";
 import useUnauthed from "../../hooks/useUnauthed";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 
 const SingleCollection: NextPage = () => {
@@ -105,11 +106,12 @@ const SingleCollection: NextPage = () => {
         </Box>
       ) : (
         <>
+          <LoadingOverlay visible={deleteCollectionMutation.isLoading || deleteHintMutation.isLoading} />
           <CreateCollectionModal
             isModalOpen={isCollectionModalOpen}
-            setModalOpen={setCollectionModalOpen}
             onClose={() => { setCollectionModalOpen(false) }}
             isEditing
+            isCollectionsLoading={updateCollectionMutation.isLoading}
             form={collectionForm}
             onConfirm={collectionForm.onSubmit((values) => {
               // TODO: optimistic update
@@ -140,6 +142,7 @@ const SingleCollection: NextPage = () => {
             isModalOpen={isHintModalOpen}
             setModalOpen={setHintModalOpen}
             isEditing={typeof selectedHint !== "undefined"}
+            isHintLoading={createHintMutation.isLoading || updateHintMutation.isLoading}
 
             handleContentChange={(editorHtml) => setHintContent(editorHtml)}
             hintContent={hintContent}
@@ -150,6 +153,7 @@ const SingleCollection: NextPage = () => {
                 { title: selectedHint.title, content: selectedHint.content } :
                 { title: "", content: "" }
             }
+
 
 
             form={hintForm}
@@ -267,7 +271,7 @@ const SingleCollection: NextPage = () => {
             <>
               {
                 hints?.length === 0 ?
-                  (<Text fz="sm" c="gray.6">No hints in this collection.</Text>) :
+                  (<Text fz="sm" c="gray.6">No hints found.</Text>) :
                   (
                     <ul style={{ paddingLeft: 0 }}>
                       <SimpleGrid cols={1} spacing="xl">

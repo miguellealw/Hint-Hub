@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader, Box } from "@mantine/core"
+import { Button, createStyles, Group, SimpleGrid, Title, Tooltip, Text, Loader, Box, LoadingOverlay } from "@mantine/core"
 import { IconFolderPlus } from "@tabler/icons";
 import { type NextPage } from "next";
 import MainLayout from "../components/layouts/MainLayout";
@@ -52,10 +52,10 @@ const Collections: NextPage = () => {
 
 
   // trpc
-  const { 
-    data: collections, 
-    isLoading: isLoadingCollections, 
-    isSuccess: isSuccessCollections 
+  const {
+    data: collections,
+    isLoading: isLoadingCollections,
+    isSuccess: isSuccessCollections
   } = trpc.collection.getAll.useQuery({
     searchValue
   }, {
@@ -63,7 +63,10 @@ const Collections: NextPage = () => {
   });
   const mutation = useCreateCollection({
     onMutateCb: () => { setCollectionModalOpen(false) },
-    onSuccessCb: () => { setCollectionModalOpen(false) },
+    onSuccessCb: () => {
+      setCollectionModalOpen(false)
+      collectionForm.reset();
+    },
     onErrorCb: (newCollection) => {
       collectionForm.setFieldValue("name", newCollection.name)
       setCollectionModalOpen(true)
@@ -83,14 +86,15 @@ const Collections: NextPage = () => {
     <MainLayout containerSize="md">
       <CreateCollectionModal
         isModalOpen={isCollectionModalOpen}
-        setModalOpen={setCollectionModalOpen}
         form={collectionForm}
+        isCollectionsLoading={mutation.isLoading}
         onClose={() => {
           setCollectionModalOpen(false);
           collectionForm.reset();
         }}
         onConfirm={collectionForm.onSubmit((values) => {
           mutation.mutate({ name: values.name })
+          // NOTE: don't call collectionForm.reset() since it will be reset on errors
         }, collectionForm.handleEditCollectionError)}
         onCancel={() => {
           setCollectionModalOpen(false)

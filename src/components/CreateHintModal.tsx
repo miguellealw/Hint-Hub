@@ -1,9 +1,8 @@
 import { type MouseEventHandler, type FormEvent } from 'react';
-import { Modal, Button, Group, TextInput, Tooltip, ModalProps } from '@mantine/core';
+import { Modal, Button, Group, TextInput, Tooltip, type ModalProps } from '@mantine/core';
 import Editor from './RichTextEditor';
 import { type UseFormReturnType } from '@mantine/form';
-import { Hint } from '@prisma/client';
-// import { CreatableSelect as CollectionSelect } from './CreatableSelect';
+import LoadingOverlay from './LoadingOverlay';
 
 type HintFormValues = {
   title: string;
@@ -24,10 +23,11 @@ type CreateHintModalProps = {
   isEditing?: boolean
 
   initialValues: HintFormValues
+  isHintLoading: boolean
 }
 
 export default function CreateHintModal({
-  isModalOpen, setModalOpen,
+  isModalOpen,
   handleContentChange,
   onConfirm,
   onCancel,
@@ -36,6 +36,7 @@ export default function CreateHintModal({
   form,
   isEditing,
   initialValues,
+  isHintLoading
 }: CreateHintModalProps) {
   return (
     <Modal
@@ -45,6 +46,7 @@ export default function CreateHintModal({
       overflow="inside"
       size="xl"
     >
+      <LoadingOverlay visible={isHintLoading} />
       <form onSubmit={onConfirm}>
         <TextInput label="Title" placeholder="Title" data-autofocus {...form.getInputProps('title')} />
         {/* <CollectionSelect
