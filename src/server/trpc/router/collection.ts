@@ -22,6 +22,11 @@ export const collectionRouter = router({
             contains: input.searchValue ?? "",
             mode: "insensitive",
           }
+        },
+        include: {
+          _count: {
+            select: { hints: true },
+          }
         }
       }
       );
@@ -46,7 +51,6 @@ export const collectionRouter = router({
   update: protectedProcedure
     .input(z.object({ id: z.string(), name: z.string().min(1, "Name is required") }))
     .mutation(async ({ input, ctx }) => {
-      // TODO: check if collection exists
       const collection = await ctx.prisma.collection.findFirst({ where: { name: input.name, }, });
       if (collection) throw new Error("Collection name already exists");
 

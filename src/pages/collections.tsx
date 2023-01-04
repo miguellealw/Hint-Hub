@@ -149,8 +149,14 @@ const Collections: NextPage = () => {
 
 }
 
-// TODO: change any to correct type
-const CollectionsList = ({ collections, classes }: { collections: Collection[] | undefined, classes: any }) => {
+type CollectionWithCount = Collection & { _count: { hints: number } };
+
+type CollectionsListProps = {
+  collections: CollectionWithCount[] | undefined,
+  classes: { collectionCard: string }
+};
+
+const CollectionsList = ({ collections, classes }: CollectionsListProps) => {
   const largeScreen = useMediaQuery('(min-width: 900px)');
 
   return (
@@ -162,7 +168,7 @@ const CollectionsList = ({ collections, classes }: { collections: Collection[] |
             <Link key={collection.id} href={`/collections/${collection.id}`}>
               <li className={classes.collectionCard}>
                 <Text fz="lg" fw={600} c="indigo.9">{collection.name}</Text>
-                <Text fz="xs" c="indigo.4">5 hints</Text>
+                <Text fz="xs" c="indigo.4">{collection._count.hints} hints</Text>
               </li>
             </Link>
           ))
