@@ -1,6 +1,6 @@
 import { Button, createStyles, Text, Group } from "@mantine/core";
 import { IconBrandGithub } from "@tabler/icons";
-import MainLayout, { MainLandingLayout } from "../components/layouts/MainLayout";
+import { MainLandingLayout } from "../components/layouts/MainLayout";
 import { signIn, useSession } from "next-auth/react";
 import router from "next/router";
 
