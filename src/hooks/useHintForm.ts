@@ -1,11 +1,19 @@
-import { useForm } from "@mantine/form";
+import { useForm, zodResolver } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
-import isStringEmpty from "../utils/isStringEmpty";
+import { z } from "zod";
 
 type HintFormValues = {
   title: string;
   content: string;
 }
+
+const schema = z.object({
+  title: z.string().trim().min(2).max(40, "Title field must 2 - 40 characters"),
+  // TODO: figure out if 1000 chars is fine
+  // TODO: content is not being validated
+  content: z.string().trim().min(2).max(1000, "Content field must 2 - 1000 characters")
+
+})
 
 const handleCreateHintError = () =>
   showNotification({
@@ -20,10 +28,7 @@ const useHintForm = (initialValues: HintFormValues) => {
     handleCreateHintError,
     ...useForm({
       initialValues,
-      validate: {
-        title: (title) => isStringEmpty(title) ?? "Title field can't be empty",
-        content: (content) => isStringEmpty(content) ?? "Content field can't be empty"
-      }
+      validate: zodResolver(schema),
     })
   }
 }

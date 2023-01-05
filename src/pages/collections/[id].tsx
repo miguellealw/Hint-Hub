@@ -116,7 +116,6 @@ const SingleCollection: NextPage = () => {
             isCollectionsLoading={updateCollectionMutation.isLoading}
             form={collectionForm}
             onConfirm={collectionForm.onSubmit((values) => {
-              // TODO: optimistic update
               updateCollectionMutation.mutate({ id: currentCollectionId, name: values.name }, {
                 onSuccess: () => {
                   setCollectionModalOpen(false);

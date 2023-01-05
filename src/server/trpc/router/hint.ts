@@ -40,8 +40,8 @@ export const hintRouter = router({
   create: protectedProcedure
     .input(
       z.object({
-        title: z.string().min(1, "Title is required"),
-        content: z.string().min(1, "Content is required"),
+        title: z.string().trim().min(2).max(40, "Title field must 2 - 40 characters"),
+        content: z.string().trim().min(5).max(1000, "Content field must 5 - 1000 characters"),
         collectionId: z.string(),
       })
     )
@@ -60,8 +60,8 @@ export const hintRouter = router({
     .input(
       z.object({
         id: z.string(),
-        title: z.string().min(1, "Title is required"),
-        content: z.string().min(1, "Content is required")
+        title: z.string().trim().min(2).max(40, "Title field must 2 - 40 characters"),
+        content: z.string().trim().min(2).max(1000, "Content field must 2 - 1000 characters"),
       })
     )
     .mutation(({ input, ctx }) => {
