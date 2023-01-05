@@ -1,61 +1,128 @@
-import { type NextPage } from "next";
-import { Button, Title, createStyles, Text } from "@mantine/core";
-import { IconArrowNarrowRight } from "@tabler/icons";
-import MainLayout from "../components/layouts/MainLayout";
-import { useMediaQuery } from "@mantine/hooks";
+import { Button, createStyles, Text, Group } from "@mantine/core";
+import { IconBrandGithub } from "@tabler/icons";
+import MainLayout, { MainLandingLayout } from "../components/layouts/MainLayout";
 import { signIn, useSession } from "next-auth/react";
 import router from "next/router";
-import { useLargeScreen } from "../hooks/useMediaQueries";
 
-const useStyles = createStyles(() => ({
-  mainContent: {
-    display: "flex",
-    justifyContent: "center",
-    // alignItems: "center",
-    flexDirection: "column",
-    // remove the 60px from the header and 40px from the header padding
-    minHeight: "calc(100vh - 60px - 40px)",
-    // backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
-  }
+const BREAKPOINT = '@media (max-width: 755px)';
+
+const useStyles = createStyles((theme) => ({
+  wrapper: {
+    position: 'relative',
+    boxSizing: 'border-box',
+    // backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+    // height: "100%"
+  },
+
+  inner: {
+    position: 'relative',
+    paddingTop: 200,
+    paddingBottom: 120,
+    textAlign: 'center',
+
+    [BREAKPOINT]: {
+      paddingBottom: 100,
+      paddingTop: 100,
+    },
+  },
+
+  title: {
+    // fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    fontFamily: theme.fontFamily,
+    fontSize: 62,
+    fontWeight: 900,
+    lineHeight: 1.1,
+    margin: 0,
+    padding: 0,
+    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+
+    [BREAKPOINT]: {
+      fontSize: 48,
+      lineHeight: 1.2,
+    },
+  },
+
+  description: {
+    marginTop: theme.spacing.xl,
+    fontSize: 24,
+
+    [BREAKPOINT]: {
+      fontSize: 16,
+    },
+  },
+
+  controls: {
+    marginTop: theme.spacing.xl * 2,
+    display: 'flex',
+    justifyContent: 'center',
+
+    [BREAKPOINT]: {
+      marginTop: theme.spacing.xl,
+    },
+  },
+
+  control: {
+    height: 54,
+    paddingLeft: 38,
+    paddingRight: 38,
+
+    [BREAKPOINT]: {
+      height: 54,
+      paddingLeft: 18,
+      paddingRight: 18,
+      flex: 1,
+    },
+  },
+
 }));
 
-const Home: NextPage = () => {
+export function HeroTitle() {
   const { classes } = useStyles();
-  const isLargeScreen = useLargeScreen();
   const { data: session } = useSession()
 
   return (
-    <MainLayout containerSize="sm" className={classes.mainContent}>
-      <Title order={1} weight="black" size={isLargeScreen ? "72px" : "48px"} align="center">
-        {/* Virtual Sticky Notes for Power Users */}
-        Virtual Sticky Notes
-      </Title>
+    <MainLandingLayout containerSize={700} className={classes.wrapper} containerClass={classes.inner}>
+      {/* <Container size={700} className={classes.inner}> */}
+      <h1 className={classes.title}>
+        Virtual{' '}
+        <Text component="span" variant="gradient" gradient={{ from: 'indigo', to: 'violet' }} inherit>
+          Sticky Notes
+        </Text>{' '}
+      </h1>
 
-      <Text fz="md" color="dimmed" align="center" m="md">
-        {/* Hint Hub allows you to quickly create and search small notes, or “hints”, on things that may be hard to remember, like keyboard shortcuts, math formulas, or a common process to follow. */}
+      <Text className={classes.description} color="dimmed">
         Hint Hub allows you to quickly create and search your small notes, or &ldquo;hints&rdquo;, on anything you&apos;d like. Some examples include: keyboard shortcuts, code snippets, terminal commands, or a common process to follow.
       </Text>
 
-      <Button
-        size="md"
-        color="indigo.8"
-        style={{ alignSelf: "center" }}
-        rightIcon={<IconArrowNarrowRight size={18} />}
-        onClick={() => {
-          if (!session) {
-            signIn();
-          }
-          else {
-            router.push('/collections')
-          }
-        }}
-      >
-        {/* <Link href={!session ? signIn() : "/collections"}> */}
-          Get Started
-        {/* </Link> */}
-      </Button>
-    </MainLayout>
-  );
-};
+      <Group className={classes.controls}>
+        <Button
+          size="xl"
+          className={classes.control}
+          variant="gradient"
+          gradient={{ from: 'indigo', to: 'violet' }}
+          onClick={() => {
+            if (!session) signIn();
+            else router.push('/collections')
+          }}
+        >
+          Get started
+        </Button>
 
-export default Home;
+        <Button
+          component="a"
+          // href="https://github.com/mantinedev/mantine"
+          href="https://github.com/miguellealw/Hint-Hub"
+          size="xl"
+          variant="default"
+          className={classes.control}
+          leftIcon={<IconBrandGithub size={20} />}
+        >
+          GitHub
+        </Button>
+      </Group>
+      {/* </Container> */}
+    </MainLandingLayout>
+  );
+}
+
+export default HeroTitle;

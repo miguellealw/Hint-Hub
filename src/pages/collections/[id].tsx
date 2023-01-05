@@ -286,7 +286,7 @@ const SingleCollection: NextPage = () => {
           </Group>
 
           <SearchBar
-            mb="xl"
+            // mb="xl"
             value={searchValue}
             ref={searchBarRef}
             onChange={(e) => { setSearchValue(e.currentTarget.value) }}
@@ -298,7 +298,7 @@ const SingleCollection: NextPage = () => {
                 hints?.length === 0 ?
                   (<Text fz="sm" c="gray.6">No hints found.</Text>) :
                   (
-                    <ul style={{ paddingLeft: 0 }}>
+                    <ul style={{ padding: "50px 0", margin: 0 }}>
                       <SimpleGrid cols={1} spacing="xl">
                         {
                           hints?.map(hint => (

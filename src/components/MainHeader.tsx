@@ -1,25 +1,30 @@
-import { Container, Header, Group, Text, Tooltip, Divider, ActionIcon, Avatar } from "@mantine/core";
+import { Container, Header, Group, Text, Tooltip, Divider, ActionIcon, Avatar, ColorScheme } from "@mantine/core";
 import { useSpotlight } from "@mantine/spotlight";
 import { IconBoxMultiple, IconCommand, IconLogin, IconLogout } from "@tabler/icons";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useState } from "react";
 import Logo from "./Logo";
 
 const MainHeader = () => {
   const { data: session } = useSession();
   const spotlight = useSpotlight();
 
+  const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
+  const isDark = colorScheme === 'dark';
+
   return (
-    <Header height="60" >
-      <Container py={20}
+    <Header height={75} style = {{}}>
+      <Container
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          height: "100%",
         }}>
 
         <Link href={"/"}>
-          <Logo />
+          <Logo color={isDark ? "dark" : "light"}/>
         </Link>
 
         <Group>
