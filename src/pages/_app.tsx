@@ -1,7 +1,7 @@
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { MantineProvider } from "@mantine/core";
+import { type ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core";
 
 import { trpc } from "../utils/trpc";
 
@@ -11,6 +11,7 @@ import { ModalsProvider } from "@mantine/modals";
 import { NotificationsProvider } from "@mantine/notifications";
 import { type SpotlightAction, SpotlightProvider } from "@mantine/spotlight";
 import { IconBoxMultiple, IconFilePlus, IconFileText, IconFolderPlus, IconListSearch, IconReportSearch, IconSearch } from "@tabler/icons";
+import { useState } from "react";
 
 const actions: SpotlightAction[] = [
   {
@@ -56,6 +57,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
+  const toggleColorScheme = (value?: ColorScheme) =>
+    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+
   return (
     <>
       <Head>
@@ -64,31 +69,33 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <MantineProvider
-        withCSSVariables
-        withNormalizeCSS
-        theme={{
-          fontFamily: "Inter, sans-serif",
-          colorScheme: "dark",
-        }}
-      >
-        <SpotlightProvider
-          actions={actions}
-          searchIcon={<IconSearch size={18} />}
-          searchPlaceholder="Search..."
-          shortcut={['mod + P', 'mod + K']}
-          nothingFoundMessage="Nothing found..."
-          highlightQuery
+      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+        <MantineProvider
+          withCSSVariables
+          withNormalizeCSS
+          theme={{
+            fontFamily: "Inter, sans-serif",
+            colorScheme
+          }}
         >
-          <ModalsProvider>
-            <SessionProvider session={session}>
-              <NotificationsProvider>
-                <Component {...pageProps} />
-              </NotificationsProvider>
-            </SessionProvider>
-          </ModalsProvider>
-        </SpotlightProvider>
-      </MantineProvider>
+          <SpotlightProvider
+            actions={actions}
+            searchIcon={<IconSearch size={18} />}
+            searchPlaceholder="Search..."
+            shortcut={['mod + P', 'mod + K']}
+            nothingFoundMessage="Nothing found..."
+            highlightQuery
+          >
+            <ModalsProvider>
+              <SessionProvider session={session}>
+                <NotificationsProvider>
+                  <Component {...pageProps} />
+                </NotificationsProvider>
+              </SessionProvider>
+            </ModalsProvider>
+          </SpotlightProvider>
+        </MantineProvider>
+      </ColorSchemeProvider>
     </>
   );
 };
