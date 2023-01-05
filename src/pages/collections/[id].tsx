@@ -1,4 +1,4 @@
-import { Box, Button, Group, Loader, SimpleGrid, Title, Tooltip, Text, ActionIcon } from "@mantine/core"
+import { Box, Button, Group, Loader, SimpleGrid, Title, Tooltip, Text, ActionIcon, createStyles } from "@mantine/core"
 import { IconEdit, IconFilePlus, IconTrash } from "@tabler/icons";
 import { type NextPage } from "next";
 import SearchBar from "../../components/InputWithButton";
@@ -20,6 +20,11 @@ import useUnauthed from "../../hooks/useUnauthed";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import { useLargeScreen } from "../../hooks/useMediaQueries";
 
+const useStyles = createStyles((theme) => ({
+  heading: {
+    color: theme.colorScheme === "dark" ? theme.colors.gray[0] : theme.colors.dark[9],
+  },
+}))
 
 const SingleCollection: NextPage = () => {
   const [isHintModalOpen, setHintModalOpen] = useState(false);
@@ -28,6 +33,7 @@ const SingleCollection: NextPage = () => {
   const [currentCollectionName, setCurrentCollectionName] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const isLargeScreen = useLargeScreen();
+  const { classes } = useStyles();
 
   const { status } = useUnauthed();
 
@@ -210,7 +216,7 @@ const SingleCollection: NextPage = () => {
 
           <Group position="apart" align="center" my="xl" style={{ width: "100%" }}>
             <Group position="left" align="center" style={{ width: isLargeScreen ? "80%" : "100%" }}>
-              <Title align="center" style={{
+              <Title align="center" className={classes.heading} style={{
                 // maxWidth: "auto",
                 whiteSpace: "nowrap",
                 overflow: "hidden",

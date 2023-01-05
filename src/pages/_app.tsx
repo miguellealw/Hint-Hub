@@ -69,7 +69,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         withNormalizeCSS
         theme={{
           fontFamily: "Inter, sans-serif",
-          // colorScheme: "dark",
+          colorScheme: "dark",
         }}
       >
         <SpotlightProvider

@@ -20,6 +20,9 @@ const useStyles = createStyles(theme => ({
     border: `1px solid ${theme.colors.gray[2]}`,
     position: "relative"
   },
+  hintTitle: {
+    color: theme.colorScheme === "dark" ? theme.colors.gray[0] : theme.colors.dark[9],
+  },
   iconEdit: {
     cursor: "pointer",
     color: theme.colors.gray[4],
@@ -35,7 +38,7 @@ export default function HintCard({ hint, onDelete, onEdit, ...props }: HintCardP
   return (
     <li {...props} style={{ listStyleType: "none", position: "relative" }}>
       <Group position="apart" align="center" mb="sm">
-        <Title order={6}>{hint.title}</Title>
+        <Title order={6} className={classes.hintTitle}>{hint.title}</Title>
         <HintCardMenu
           classes={classes}
           onDelete={onDelete}
