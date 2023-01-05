@@ -101,7 +101,8 @@ const MainHeader = () => {
               </>
             )
           }
-          <LoginButton />
+          {/* Only show the login button on small screens, but not log out button */}
+          {(isLargeScreen || !session) && <LoginButton />}
         </Group>
       </Container>
     </Header>
@@ -110,7 +111,6 @@ const MainHeader = () => {
 
 const LoginButton: React.FC = () => {
   const { data: sessionData } = useSession();
-  const isLargeScreen = useLargeScreen();
 
   return (
     <Tooltip label={!sessionData ? "Log In" : "Log Out"}>
@@ -119,7 +119,7 @@ const LoginButton: React.FC = () => {
         style={{ cursor: "pointer" }}
         color="dark"
       >
-        {!sessionData ? <IconLogin size={20} /> : (isLargeScreen && <IconLogout size={20} />)}
+        {!sessionData ? <IconLogin size={20} /> : <IconLogout size={20} />}
       </ActionIcon>
 
     </Tooltip>
