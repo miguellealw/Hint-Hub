@@ -45,6 +45,7 @@ const useStyles = createStyles((theme) => ({
   description: {
     marginTop: theme.spacing.xl,
     fontSize: 24,
+    color: theme.colorScheme === 'dark' ? theme.colors.gray[1] : theme.colors.dark[0],
 
     [BREAKPOINT]: {
       fontSize: 16,

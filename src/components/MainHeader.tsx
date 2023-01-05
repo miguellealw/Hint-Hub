@@ -14,7 +14,7 @@ const MainHeader = () => {
   const isDark = colorScheme === 'dark';
 
   return (
-    <Header height={75} style = {{}}>
+    <Header height={75} style={{}}>
       <Container
         style={{
           display: "flex",
@@ -24,7 +24,7 @@ const MainHeader = () => {
         }}>
 
         <Link href={"/"}>
-          <Logo color={isDark ? "dark" : "light"}/>
+          <Logo color={isDark ? "dark" : "light"} />
         </Link>
 
         <Group>
@@ -64,18 +64,18 @@ const MainHeader = () => {
 
                 <Divider orientation="vertical" />
 
-                <Avatar 
-                  src={session.user?.image} 
-                  radius="xl" 
+                <Avatar
+                  src={session.user?.image}
+                  radius="xl"
                   size="sm"
                   color={session.user?.image ? "transparent" : "indigo"}
                   alt={`${session.user?.name} Profile Picutre`}
                 />
 
-                <LoginButton />
               </>
             )
           }
+          <LoginButton />
         </Group>
       </Container>
     </Header>
