@@ -5,6 +5,7 @@ import MainLayout from "../components/layouts/MainLayout";
 import { useMediaQuery } from "@mantine/hooks";
 import { signIn, useSession } from "next-auth/react";
 import router from "next/router";
+import { useLargeScreen } from "../hooks/useMediaQueries";
 
 const useStyles = createStyles(() => ({
   mainContent: {
@@ -20,12 +21,12 @@ const useStyles = createStyles(() => ({
 
 const Home: NextPage = () => {
   const { classes } = useStyles();
-  const largeScreen = useMediaQuery('(min-width: 900px)');
+  const isLargeScreen = useLargeScreen();
   const { data: session } = useSession()
 
   return (
     <MainLayout containerSize="sm" className={classes.mainContent}>
-      <Title order={1} weight="black" size={largeScreen ? "72px" : "48px"} align="center">
+      <Title order={1} weight="black" size={isLargeScreen ? "72px" : "48px"} align="center">
         {/* Virtual Sticky Notes for Power Users */}
         Virtual Sticky Notes
       </Title>

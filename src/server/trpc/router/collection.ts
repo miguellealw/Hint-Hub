@@ -49,7 +49,10 @@ export const collectionRouter = router({
     }),
 
   update: protectedProcedure
-    .input(z.object({ id: z.string(), name: z.string().min(1, "Name is required") }))
+    .input(z.object({ 
+      id: z.string(), 
+      name: z.string().min(1, "Name is required").max(50, "Name can only be 50 or fewer characters") 
+    }))
     .mutation(async ({ input, ctx }) => {
       const collection = await ctx.prisma.collection.findFirst({ where: { name: input.name, }, });
       if (collection) throw new Error("Collection name already exists");

@@ -1,4 +1,4 @@
-import { Container, Header, Group, Text, Tooltip, Box, Divider } from "@mantine/core";
+import { Container, Header, Group, Text, Tooltip, Divider, ActionIcon, Avatar } from "@mantine/core";
 import { useSpotlight } from "@mantine/spotlight";
 import { IconBoxMultiple, IconCommand, IconLogin, IconLogout } from "@tabler/icons";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -25,37 +25,52 @@ const MainHeader = () => {
         <Group>
           {
             session &&
-            <Group>
-              <Text
-                style={{
-                  maxWidth: "100px",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-                color="indigo.5"
-                fw="bold">
-                {session.user?.name} 
-              </Text>
+            (
+              <>
 
-              <Tooltip label="My Collections" position="bottom">
-                <Link href="/collections">
-                  <Box ml="md">
-                    <IconBoxMultiple size={20} />
-                  </Box>
-                </Link>
-              </Tooltip>
+                <Group>
+                  <Text
+                    style={{
+                      maxWidth: "100px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                    color="indigo.5"
+                    fw="bold">
+                    {session.user?.name}
+                  </Text>
 
-              {/* TODO: change command icon on windows */}
-              <Tooltip label="Command Palette (⌘ + K)" position="bottom">
-                <Box onClick={() => spotlight.openSpotlight()} style={{ cursor: "pointer" }}>
-                  <IconCommand size={20} />
-                </Box>
-              </Tooltip>
-            </Group>
+                  <Tooltip label="My Collections" position="bottom">
+                    <Link href="/collections">
+                      <ActionIcon color="indigo">
+                        <IconBoxMultiple size={20} />
+                      </ActionIcon>
+                    </Link>
+                  </Tooltip>
+
+                  {/* TODO: change command icon on windows */}
+                  <Tooltip label="Command Palette (⌘ + K)" position="bottom">
+                    <ActionIcon color="dark" onClick={() => spotlight.openSpotlight()} style={{ cursor: "pointer" }}>
+                      <IconCommand size={20} />
+                    </ActionIcon>
+                  </Tooltip>
+                </Group>
+
+                <Divider orientation="vertical" />
+
+                <Avatar 
+                  src={session.user?.image} 
+                  radius="xl" 
+                  size="sm"
+                  color={session.user?.image ? "transparent" : "indigo"}
+                  alt={`${session.user?.name} Profile Picutre`}
+                />
+
+                <LoginButton />
+              </>
+            )
           }
-          <Divider orientation="vertical" />
-          <LoginButton />
         </Group>
       </Container>
     </Header>
@@ -67,12 +82,13 @@ const LoginButton: React.FC = () => {
 
   return (
     <Tooltip label={!sessionData ? "Log In" : "Log Out"}>
-      <Box
+      <ActionIcon
         onClick={sessionData ? () => signOut() : () => signIn()}
         style={{ cursor: "pointer" }}
+        color="dark"
       >
         {!sessionData ? <IconLogin size={20} /> : <IconLogout size={20} />}
-      </Box >
+      </ActionIcon>
 
     </Tooltip>
   );

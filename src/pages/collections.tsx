@@ -13,6 +13,7 @@ import { useHotkeys, useMediaQuery } from "@mantine/hooks";
 import useCollectionForm from "../hooks/useCollectionForm";
 import useUnauthed from "../hooks/useUnauthed";
 import { useCreateCollection } from "../hooks/collectionHooks";
+import { useLargeScreen } from "../hooks/useMediaQueries";
 
 const useStyles = createStyles((theme) => ({
   collectionCard: {
@@ -157,17 +158,22 @@ type CollectionsListProps = {
 };
 
 const CollectionsList = ({ collections, classes }: CollectionsListProps) => {
-  const largeScreen = useMediaQuery('(min-width: 900px)');
+  const isLargeScreen = useLargeScreen();
 
   return (
     <ul style={{ paddingLeft: 0 }}>
-      <SimpleGrid cols={largeScreen ? 3 : 1}>
+      <SimpleGrid cols={isLargeScreen ? 3 : 1}>
         {collections?.length === 0 ?
           <Text align="center" c="gray.5">You don&apos;t have any collections yet.</Text> :
           collections?.map(collection => (
             <Link key={collection.id} href={`/collections/${collection.id}`}>
               <li className={classes.collectionCard}>
-                <Text fz="lg" fw={600} c="indigo.9">{collection.name}</Text>
+                <Text fz="lg" fw={600} c="indigo.9" style={{
+                  maxWidth: "100%",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}>{collection.name}</Text>
                 <Text fz="xs" c="indigo.4">{collection._count.hints} hints</Text>
               </li>
             </Link>

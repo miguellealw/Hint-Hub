@@ -1,4 +1,4 @@
-import { Box, Button, Group, Loader, SimpleGrid, Title, Tooltip, Text } from "@mantine/core"
+import { Box, Button, Group, Loader, SimpleGrid, Title, Tooltip, Text, ActionIcon } from "@mantine/core"
 import { IconEdit, IconFilePlus, IconTrash } from "@tabler/icons";
 import { type NextPage } from "next";
 import SearchBar from "../../components/InputWithButton";
@@ -18,6 +18,7 @@ import useCollectionForm from "../../hooks/useCollectionForm";
 import type { Hint } from "@prisma/client";
 import useUnauthed from "../../hooks/useUnauthed";
 import LoadingOverlay from "../../components/LoadingOverlay";
+import { useLargeScreen } from "../../hooks/useMediaQueries";
 
 
 const SingleCollection: NextPage = () => {
@@ -26,6 +27,7 @@ const SingleCollection: NextPage = () => {
   const searchBarRef = useRef<HTMLInputElement>(null);
   const [currentCollectionName, setCurrentCollectionName] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const isLargeScreen = useLargeScreen();
 
   const { status } = useUnauthed();
 
@@ -207,59 +209,77 @@ const SingleCollection: NextPage = () => {
             }}
           />
 
-          <Group position="apart" align="center" my="xl">
-            <Group align="center">
-              <Title align="center">{currentCollectionName}</Title>
+          <Group position="apart" align="center" my="xl" style={{ width: "100%" }}>
+            <Group position="left" align="center" style={{ width: isLargeScreen ? "80%" : "100%" }}>
+              <Title align="center" style={{
+                // maxWidth: "auto",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}>{currentCollectionName}</Title>
 
-              <Tooltip label="Edit Collection ('O')">
-                <span onClick={() => { setCollectionModalOpen(true) }}>
-                  <IconEdit size={20} style={{ cursor: "pointer" }} />
-                </span>
-              </Tooltip>
+              {/* Icon group */}
+              <Group style={{
+                maxWidth: "auto",
+              }}>
+                <Tooltip label="Edit Collection ('O')">
+                  <ActionIcon onClick={() => { setCollectionModalOpen(true) }} color="indigo">
+                    <IconEdit size={20} style={{ cursor: "pointer" }} />
+                  </ActionIcon>
+                </Tooltip>
 
-              <Tooltip label="Delete Collection">
-                <span onClick={() => {
-                  openDeleteConfirmModal({
-                    onConfirm: () => {
-                      deleteCollectionMutation.mutate(
-                        { id: currentCollectionId },
-                        {
-                          // on mutate success
-                          onSuccess: () => {
-                            router.push(`/collections`)
-                            showNotification({
-                              message: "Collection Deleted",
-                              color: "red"
-                            });
-                          },
-                          onError: (error) => {
-                            showNotification({
-                              message: error.message,
-                              color: "red"
-                            });
-                          },
-                          onSettled: () => {
-                            // refetch collection data
-                            utils.collection.getAll.invalidate();
-                          }
+                <Tooltip label="Delete Collection">
+                  <ActionIcon
+                    color="red"
+                    onClick={() => {
+                      openDeleteConfirmModal({
+                        onConfirm: () => {
+                          deleteCollectionMutation.mutate(
+                            { id: currentCollectionId },
+                            {
+                              // on mutate success
+                              onSuccess: () => {
+                                router.push(`/collections`)
+                                showNotification({
+                                  message: "Collection Deleted",
+                                  color: "red"
+                                });
+                              },
+                              onError: (error) => {
+                                showNotification({
+                                  message: error.message,
+                                  color: "red"
+                                });
+                              },
+                              onSettled: () => {
+                                // refetch collection data
+                                utils.collection.getAll.invalidate();
+                              }
+                            }
+                          );
                         }
-                      );
-                    }
-                  })
-                }}>
-                  <IconTrash size={20} style={{ cursor: "pointer" }} />
-                </span>
-              </Tooltip>
+                      })
+                    }}>
+                    <IconTrash size={20} style={{ cursor: "pointer" }} />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
             </Group>
 
+            {/* <Box style={{ width: "10%" }}> */}
             <Tooltip label="Create Hint ('C')">
-              <Button color="indigo.8" leftIcon={<IconFilePlus size={18} />} onClick={() => setHintModalOpen(true)}>
+              <Button
+                color="indigo.8"
+                leftIcon={<IconFilePlus size={18} />}
+                onClick={() => setHintModalOpen(true)}
+              >
                 Create Hint
               </Button>
             </Tooltip>
+            {/* </Box> */}
+            {/* </Group> */}
           </Group>
 
-          {/* <SearchBar ref={SearchBarRef} mb="xl" /> */}
           <SearchBar
             mb="xl"
             value={searchValue}
