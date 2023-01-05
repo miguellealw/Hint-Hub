@@ -292,11 +292,11 @@ const SingleCollection: NextPage = () => {
             onChange={(e) => { setSearchValue(e.currentTarget.value) }}
           />
 
-          {isHintsLoading ? (<Text size="sm" color="gray.7">Loading hints...</Text>) : (
+          {isHintsLoading ? (<Text size="sm" color="gray.7" mt="lg">Loading hints...</Text>) : (
             <>
               {
                 hints?.length === 0 ?
-                  (<Text fz="sm" c="gray.6">No hints found.</Text>) :
+                  (<Text fz="sm" c="gray.6" mt="lg">No hints found.</Text>) :
                   (
                     <ul style={{ padding: "50px 0", margin: 0 }}>
                       <SimpleGrid cols={1} spacing="xl">

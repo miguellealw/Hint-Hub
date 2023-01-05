@@ -26,19 +26,19 @@ const useStyles = createStyles((theme) => ({
     flexDirection: "column",
     listStyleType: "none",
     position: "relative",
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.indigo[9] : theme.colors.indigo[0],
-    color: theme.colorScheme === "dark" ? theme.colors.indigo[1] : theme.colors.indigo[9],
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.indigo[0],
+    color: theme.colorScheme === "dark" ? theme.colors.gray[1] : theme.colors.indigo[9],
     padding: theme.spacing.xl,
     borderRadius: theme.radius.sm,
     cursor: "pointer",
 
     "&:hover": {
-      backgroundColor: theme.colorScheme === "dark" ? theme.colors.indigo[6] : theme.colors.indigo[1],
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.indigo[1],
     }
   },
 
   hintCount: {
-    color: theme.colorScheme === "dark" ? theme.colors.indigo[3] : theme.colors.indigo[4],
+    color: theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.indigo[4],
   }
 }));
 

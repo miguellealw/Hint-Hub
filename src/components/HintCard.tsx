@@ -17,7 +17,7 @@ const useStyles = createStyles(theme => ({
     // backgroundColor: theme.colors.gray[0],
     padding: theme.spacing.sm,
     borderRadius: theme.radius.sm,
-    border: `1px solid ${theme.colors.gray[2]}`,
+    border: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]}`,
     position: "relative"
   },
   hintTitle: {
