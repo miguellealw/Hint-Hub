@@ -172,7 +172,7 @@ const CollectionsList = ({ collections, classes }: CollectionsListProps) => {
   const isLargeScreen = useLargeScreen();
 
   return (
-    <ul style={{ paddingLeft: 0 }}>
+    <ul style={{ paddingLeft: 0, paddingBottom: "50px", margin: 0 }}>
       <SimpleGrid cols={isLargeScreen ? 3 : 1}>
         {collections?.length === 0 ?
           <Text align="center" c="gray.5">You don&apos;t have any collections yet.</Text> :
