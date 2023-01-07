@@ -83,7 +83,8 @@ const Collections: NextPage = () => {
 
   if (status === "loading") {
     return (
-      <Box sx={{ width: "100vw", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      // TODO: add dark mode to auth loading screen
+      <Box sx={{width: "100vw", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <Loader color="indigo" />
       </Box>
     )

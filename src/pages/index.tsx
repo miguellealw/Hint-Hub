@@ -85,14 +85,15 @@ export function HeroTitle() {
     <MainLandingLayout containerSize={700} className={classes.wrapper} containerClass={classes.inner}>
       {/* <Container size={700} className={classes.inner}> */}
       <h1 className={classes.title}>
-        Virtual{' '}
         <Text component="span" variant="gradient" gradient={{ from: 'indigo', to: 'violet' }} inherit>
-          Sticky Notes
+          Minimal{' '}
         </Text>{' '}
+        Note Taking
       </h1>
 
       <Text className={classes.description} color="dimmed">
-        Hint Hub allows you to quickly create and search your small notes, or &ldquo;hints&rdquo;, on anything you&apos;d like. Some examples include: keyboard shortcuts, code snippets, terminal commands, or a common process to follow.
+        {/* Hint Hub allows you to quickly create and search your small notes, or &ldquo;hints&rdquo;, on anything you&apos;d like. Some examples include: keyboard shortcuts, code snippets, terminal commands, or a common process to follow. */}
+        Hint Hub is a minimal, but intuitive, note taking application with rich text capabilities, keyboard shortcuts, and a command palette.
       </Text>
 
       <Group className={classes.controls}>
