@@ -6,7 +6,6 @@ const useStyle = createStyles((theme) => ({
   wrapper: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
     minHeight: "100vh",
-    width: "100vw",
     position: 'relative'
   },
   container: {
