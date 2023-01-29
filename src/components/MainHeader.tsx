@@ -79,11 +79,11 @@ const MainHeader = () => {
                       </Tooltip>
 
                       {/* TODO: change command icon on windows */}
-                      <Tooltip label="Command Palette (⌘ + K)" position="bottom">
+                      {/* <Tooltip label="Command Palette (⌘ + K)" position="bottom">
                         <ActionIcon color="dark" onClick={() => spotlight.openSpotlight()} style={{ cursor: "pointer" }}>
                           <IconCommand size={20} />
                         </ActionIcon>
-                      </Tooltip>
+                      </Tooltip> */}
                     </Group>
 
                     <Divider orientation="vertical" />

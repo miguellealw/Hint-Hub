@@ -93,7 +93,8 @@ export function HeroTitle() {
 
       <Text className={classes.description} color="dimmed">
         {/* Hint Hub allows you to quickly create and search your small notes, or &ldquo;hints&rdquo;, on anything you&apos;d like. Some examples include: keyboard shortcuts, code snippets, terminal commands, or a common process to follow. */}
-        Hint Hub is a minimal, but intuitive, note taking application with rich text capabilities, keyboard shortcuts, and a command palette.
+        {/* Hint Hub is a minimal, but intuitive, note taking application with rich text capabilities, keyboard shortcuts, and a command palette. */}
+        Hint Hub is a minimal, but intuitive, note taking application with rich text capabilities and keyboard shortcuts for easy navigation.
       </Text>
 
       <Group className={classes.controls}>
