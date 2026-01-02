@@ -81,7 +81,10 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
             icon: () => <IconFolderPlus color="gray" />,
             onClick: () => {
               setOpen(false);
-              setCollectionModalOpen(true);
+              // Delay opening the modal to allow command palette to fully close
+              setTimeout(() => {
+                setCollectionModalOpen(true);
+              }, 100);
             },
           },
           {

@@ -1,4 +1,4 @@
-import { FormEvent, SyntheticEvent, useState } from 'react';
+import { FormEvent, SyntheticEvent, useEffect, useRef } from 'react';
 import { Modal, Button, Group, TextInput } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import LoadingOverlay from '../LoadingOverlay';
@@ -26,6 +26,20 @@ export default function CreateCollectionModal({
   isEditing,
   isCollectionsLoading,
 }: CreateHintModalProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      // Longer timeout to ensure the modal is fully rendered and command palette is closed
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }, 150);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isModalOpen]);
+
   return (
     <Modal
       opened={isModalOpen}
@@ -36,6 +50,7 @@ export default function CreateCollectionModal({
       <LoadingOverlay visible={isCollectionsLoading} />
       <form onSubmit={onConfirm}>
         <TextInput
+          ref={inputRef}
           label="Collection Name"
           placeholder="Name"
           data-autofocus
