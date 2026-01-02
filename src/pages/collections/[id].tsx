@@ -1,5 +1,5 @@
 import { Box, Button, Group, Loader, SimpleGrid, Title, Tooltip, Text, ActionIcon, createStyles } from "@mantine/core"
-import { IconEdit, IconFilePlus, IconTrash } from "@tabler/icons";
+import { IconEdit, IconFilePlus, IconTrash, IconFileExport } from "@tabler/icons";
 import { type NextPage } from "next";
 import SearchBar from "../../components/InputWithButton";
 import MainLayout from "../../components/layouts/MainLayout";
@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { openDeleteConfirmModal } from "../../utils/openConfirmModals";
 import { showNotification } from "@mantine/notifications";
 import CreateCollectionModal from "../../components/Modals/CollectionModal";
+import { useSession } from "next-auth/react";
 import { useDeleteCollection, useUpdateCollection } from "../../hooks/collectionHooks";
 import useHintForm from "../../hooks/useHintForm";
 import useCollectionForm from "../../hooks/useCollectionForm";
@@ -19,6 +20,7 @@ import type { Hint } from "@prisma/client";
 import useUnauthed from "../../hooks/useUnauthed";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import { useLargeScreen } from "../../hooks/useMediaQueries";
+import { exportCollectionToPDF } from "../../utils/exportToPDF";
 
 const useStyles = createStyles((theme) => ({
   heading: {
@@ -36,6 +38,7 @@ const SingleCollection: NextPage = () => {
   const { classes } = useStyles();
 
   const { status } = useUnauthed();
+  const { data: session } = useSession();
 
   // New hint state
   const [hintContent, setHintContent] = useState("");
@@ -230,6 +233,32 @@ const SingleCollection: NextPage = () => {
                 <Tooltip label="Edit Collection ('O')">
                   <ActionIcon onClick={() => { setCollectionModalOpen(true) }} color="indigo">
                     <IconEdit size={20} style={{ cursor: "pointer" }} />
+                  </ActionIcon>
+                </Tooltip>
+
+                <Tooltip label="Export Collection to PDF">
+                  <ActionIcon
+                    color="blue"
+                    onClick={() => {
+                      if (hints && hints.length > 0) {
+                        exportCollectionToPDF({
+                          collectionName: currentCollectionName,
+                          hints: hints,
+                          userName: session?.user?.name || undefined,
+                        });
+                        showNotification({
+                          message: "PDF exported successfully",
+                          color: "green"
+                        });
+                      } else {
+                        showNotification({
+                          message: "No hints to export",
+                          color: "orange"
+                        });
+                      }
+                    }}
+                  >
+                    <IconFileExport size={20} style={{ cursor: "pointer" }} />
                   </ActionIcon>
                 </Tooltip>
 
