@@ -19,7 +19,7 @@ type CommandProps = {
 }
 
 const Command = ({ isOpen, setOpen }: CommandProps) => {
-  const [page, setPage] = useState<"root" | "projects">("root");
+  const [page, setPage] = useState<"root" | "collections">("root");
   const [search, setSearch] = useState("");
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
   const [isHintModalOpen, setHintModalOpen] = useState(false);
@@ -32,6 +32,9 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
 
   const utils = trpc.useContext();
   const createHintMutation = trpc.hint.create.useMutation();
+
+  // Fetch collections for search
+  const { data: collections } = trpc.collection.getAll.useQuery({ searchValue: search });
 
   const mutation = useCreateCollection({
     onMutateCb: () => { setCollectionModalOpen(false) },
@@ -63,21 +66,6 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
             },
             // href: "/collections",
           },
-          {
-            id: "documentation",
-            children: "Documentation",
-            icon: () => <IconFileText color="gray" />,
-            href: "#",
-          },
-          // {
-          //   id: "projects",
-          //   children: "Projects",
-          //   icon: "CollectionIcon",
-          //   closeOnSelect: false,
-          //   onClick: () => {
-          //     setPage("projects");
-          //   },
-          // },
         ],
       },
 
@@ -102,7 +90,10 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
             id: "search-collections",
             children: "Search Collections",
             icon: () => <IconReportSearch color="gray" />,
-            href: "#",
+            closeOnSelect: false,
+            onClick: () => {
+              setPage("collections");
+            },
           },
         ],
       },
@@ -260,8 +251,43 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
           )}
         </CommandPalette.Page>
 
-        <CommandPalette.Page id="projects">
-          {/* Projects page */}
+        <CommandPalette.Page id="collections">
+          {collections && collections.length > 0 ? (
+            <>
+              <CommandPalette.List heading="Collections">
+                {collections.map((collection, index) => (
+                  <CommandPalette.ListItem
+                    key={collection.id}
+                    index={index}
+                    onClick={() => {
+                      router.push(`/collections/${collection.id}`);
+                      setOpen(false);
+                      setPage("root");
+                    }}
+                  >
+                    {collection.name}
+                  </CommandPalette.ListItem>
+                ))}
+              </CommandPalette.List>
+              <CommandPalette.List heading="Actions">
+                <CommandPalette.ListItem
+                  index={collections.length}
+                  onClick={() => setPage("root")}
+                >
+                  ← Back to main menu
+                </CommandPalette.ListItem>
+              </CommandPalette.List>
+            </>
+          ) : (
+            <CommandPalette.List>
+              <CommandPalette.ListItem
+                index={0}
+                onClick={() => setPage("root")}
+              >
+                ← Back to main menu
+              </CommandPalette.ListItem>
+            </CommandPalette.List>
+          )}
         </CommandPalette.Page>
       </CommandPalette>
     </>
