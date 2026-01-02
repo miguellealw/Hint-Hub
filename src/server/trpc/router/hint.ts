@@ -31,11 +31,32 @@ export const hintRouter = router({
       });
     }),
 
-  getAll: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.hint.findMany({
-      where: { userId: ctx.session.user.id }
-    });
-  }),
+  getAll: protectedProcedure
+    .input(z.object({
+      searchValue: z.string().optional()
+    }))
+    .query(({ input, ctx }) => {
+      return ctx.prisma.hint.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          title: {
+            contains: input?.searchValue ?? "",
+            mode: "insensitive",
+          }
+        },
+        include: {
+          Collection: {
+            select: {
+              id: true,
+              name: true,
+            }
+          }
+        },
+        orderBy: {
+          updatedAt: 'desc'
+        }
+      });
+    }),
 
   create: protectedProcedure
     .input(

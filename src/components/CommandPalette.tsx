@@ -19,7 +19,7 @@ type CommandProps = {
 }
 
 const Command = ({ isOpen, setOpen }: CommandProps) => {
-  const [page, setPage] = useState<"root" | "collections">("root");
+  const [page, setPage] = useState<"root" | "collections" | "hints">("root");
   const [search, setSearch] = useState("");
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
   const [isHintModalOpen, setHintModalOpen] = useState(false);
@@ -35,6 +35,12 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
 
   // Fetch collections for search
   const { data: collections } = trpc.collection.getAll.useQuery({ searchValue: search });
+
+  // Fetch all hints for search (only when on hints page)
+  const { data: allHints } = trpc.hint.getAll.useQuery(
+    { searchValue: search },
+    { enabled: page === "hints" }
+  ) as { data: Array<{ id: string; title: string; Collection: { id: string; name: string } }> | undefined };
 
   const mutation = useCreateCollection({
     onMutateCb: () => { setCollectionModalOpen(false) },
@@ -119,7 +125,10 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
             id: "search-hints",
             children: "Search Hints",
             icon: () => <IconFilePlus color="gray" />,
-            href: "#",
+            closeOnSelect: false,
+            onClick: () => {
+              setPage("hints");
+            },
           },
         ],
       },
@@ -272,6 +281,50 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
               <CommandPalette.List heading="Actions">
                 <CommandPalette.ListItem
                   index={collections.length}
+                  onClick={() => setPage("root")}
+                >
+                  ← Back to main menu
+                </CommandPalette.ListItem>
+              </CommandPalette.List>
+            </>
+          ) : (
+            <CommandPalette.List>
+              <CommandPalette.ListItem
+                index={0}
+                onClick={() => setPage("root")}
+              >
+                ← Back to main menu
+              </CommandPalette.ListItem>
+            </CommandPalette.List>
+          )}
+        </CommandPalette.Page>
+
+        <CommandPalette.Page id="hints">
+          {allHints && allHints.length > 0 ? (
+            <>
+              <CommandPalette.List heading="Hints">
+                {allHints.map((hint, index) => (
+                  <CommandPalette.ListItem
+                    key={hint.id}
+                    index={index}
+                    onClick={() => {
+                      router.push(`/collections/${hint.Collection.id}`);
+                      setOpen(false);
+                      setPage("root");
+                    }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span style={{ color: '#fff' }}>{hint.title}</span>
+                      <span style={{ fontSize: '0.85em', opacity: 0.6, color: '#fff' }}>
+                        in {hint.Collection.name}
+                      </span>
+                    </div>
+                  </CommandPalette.ListItem>
+                ))}
+              </CommandPalette.List>
+              <CommandPalette.List heading="Actions">
+                <CommandPalette.ListItem
+                  index={allHints.length}
                   onClick={() => setPage("root")}
                 >
                   ← Back to main menu
