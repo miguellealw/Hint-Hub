@@ -1,5 +1,4 @@
 import { Container, Header, Group, Text, Tooltip, Divider, ActionIcon, Avatar, useMantineColorScheme } from "@mantine/core";
-import { useSpotlight } from "@mantine/spotlight";
 import { IconBoxMultiple, IconCommand, IconLogin, IconLogout } from "@tabler/icons";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -11,8 +10,6 @@ import Logo from "./Logo";
 
 const MainHeader = () => {
   const { data: session } = useSession();
-  const spotlight = useSpotlight();
-
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const isDark = colorScheme === 'dark';
@@ -43,7 +40,8 @@ const MainHeader = () => {
                 {!isLargeScreen ? (
                   <HeaderMenu name={session.user?.name}
                     onClickCollections={() => { router.push("/collections") }}
-                    onClickCommand={() => spotlight.openSpotlight()}
+                    // onClickCommand={() => spotlight.openSpotlight()}
+                    onClickCommand={() => console.log("Command Palette")}
                     onClickLogout={session ? () => signOut() : () => signIn()}
                     targetComponent={
                       <Avatar
@@ -79,11 +77,11 @@ const MainHeader = () => {
                       </Tooltip>
 
                       {/* TODO: change command icon on windows */}
-                      {/* <Tooltip label="Command Palette (⌘ + K)" position="bottom">
-                        <ActionIcon color="dark" onClick={() => spotlight.openSpotlight()} style={{ cursor: "pointer" }}>
+                      <Tooltip label="Command Palette (⌘ + K)" position="bottom">
+                        <ActionIcon color="dark" onClick={() => console.log("Command")} style={{ cursor: "pointer" }}>
                           <IconCommand size={20} />
                         </ActionIcon>
-                      </Tooltip> */}
+                      </Tooltip> 
                     </Group>
 
                     <Divider orientation="vertical" />

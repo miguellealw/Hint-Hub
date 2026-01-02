@@ -1,4 +1,6 @@
 import { Container, createStyles, type MantineNumberSize } from '@mantine/core'
+import { useState } from 'react';
+import CommandPalette from '../CommandPalette';
 import MainHeader from '../MainHeader'
 import Waves from '../Waves';
 
@@ -34,10 +36,13 @@ type MainLayoutProps = {
 
 export default function MainLayout({ children, containerSize, containerClass, ...props }: MainLayoutProps) {
   const { classes } = useStyle();
+  const [ isCommandPaletteOpen, setCommandPaletteOpen ] = useState<boolean>(false);
+
   return (
     <div className={classes.wrapper}>
       <MainHeader />
       <main {...props}>
+        <CommandPalette isOpen={isCommandPaletteOpen} setOpen={setCommandPaletteOpen} />
         <Container size={containerSize} className={containerClass ? `${classes.container} ${containerClass}` : classes.container}>
           {/* <Container size={containerSize} className={containerClass}> */}
           {children}

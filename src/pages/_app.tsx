@@ -73,7 +73,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <>
       <Head>
         <title>Hint Hub</title>
-        <meta name="description" content="Virtual Sticky Notes for Power Users" />
+        <meta name="description" content="Minimal Note Taking" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -86,22 +86,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
             colorScheme
           }}
         >
-          <SpotlightProvider
-            actions={actions}
-            searchIcon={<IconSearch size={18} />}
-            searchPlaceholder="Search..."
-            shortcut={['mod + P', 'mod + K']}
-            nothingFoundMessage="Nothing found..."
-            highlightQuery
-          >
-            <ModalsProvider>
-              <SessionProvider session={session}>
-                <NotificationsProvider>
-                  <Component {...pageProps} />
-                </NotificationsProvider>
-              </SessionProvider>
-            </ModalsProvider>
-          </SpotlightProvider>
+          <ModalsProvider>
+            <SessionProvider session={session}>
+              <NotificationsProvider>
+                <Component {...pageProps} />
+              </NotificationsProvider>
+            </SessionProvider>
+          </ModalsProvider>
         </MantineProvider>
       </ColorSchemeProvider>
     </>
