@@ -86,15 +86,15 @@ export function HeroTitle() {
       {/* <Container size={700} className={classes.inner}> */}
       <h1 className={classes.title}>
         <Text component="span" variant="gradient" gradient={{ from: 'indigo', to: 'violet' }} inherit>
-          Minimal{' '}
+          Create{' '}
         </Text>{' '}
-        Note Taking
+        Quick Cheat Sheets
       </h1>
 
       <Text className={classes.description} color="dimmed">
         {/* Hint Hub allows you to quickly create and search your small notes, or &ldquo;hints&rdquo;, on anything you&apos;d like. Some examples include: keyboard shortcuts, code snippets, terminal commands, or a common process to follow. */}
         {/* Hint Hub is a minimal, but intuitive, note taking application with rich text capabilities, keyboard shortcuts, and a command palette. */}
-        Hint Hub is a minimal, but intuitive, note taking application with rich text capabilities and keyboard shortcuts for easy navigation.
+        Create and organize small notes or cheat sheets with rich text formatting, keyboard shortcuts, and the ability to export them as PDFs.
       </Text>
 
       <Group className={classes.controls}>
