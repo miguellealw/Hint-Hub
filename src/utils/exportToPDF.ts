@@ -17,7 +17,7 @@ export const exportCollectionToPDF = ({ collectionName, hints, userName }: Expor
   let yPosition = margin;
 
   // Helper function to add text with automatic page breaks
-  const addTextWithPageBreak = (text: string, fontSize: number, isBold: boolean = false) => {
+  const addTextWithPageBreak = (text: string, fontSize: number, isBold = false) => {
     doc.setFontSize(fontSize);
     if (isBold) {
       doc.setFont('helvetica', 'bold');
