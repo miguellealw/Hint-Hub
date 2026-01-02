@@ -3,6 +3,7 @@ import { Modal, Button, Group, TextInput, Tooltip, type ModalProps } from '@mant
 import Editor from './RichTextEditor';
 import { type UseFormReturnType } from '@mantine/form';
 import LoadingOverlay from './LoadingOverlay';
+import CollectionSelect from './CollectionSelect';
 
 type HintFormValues = {
   title: string;
@@ -24,6 +25,11 @@ type CreateHintModalProps = {
 
   initialValues: HintFormValues
   isHintLoading: boolean
+
+  // Optional collection selector props
+  showCollectionSelect?: boolean
+  selectedCollectionId?: string
+  onCollectionChange?: (collectionId: string) => void
 }
 
 export default function CreateHintModal({
@@ -36,7 +42,10 @@ export default function CreateHintModal({
   form,
   isEditing,
   initialValues,
-  isHintLoading
+  isHintLoading,
+  showCollectionSelect = false,
+  selectedCollectionId = "",
+  onCollectionChange
 }: CreateHintModalProps) {
   return (
     <Modal
@@ -49,13 +58,13 @@ export default function CreateHintModal({
       <LoadingOverlay visible={isHintLoading} />
       <form onSubmit={onConfirm}>
         <TextInput label="Title" placeholder="Title" data-autofocus {...form.getInputProps('title')} />
-        {/* <CollectionSelect
-          mt="md"
-          description="To create a new collection just type its name"
-          value={hintCollection}
-          onChange={(name, id) => handleCollectionChange(name, id)}
-          {...form.getInputProps('collection')}
-        /> */}
+        {showCollectionSelect && (
+          <CollectionSelect
+            mt="md"
+            value={selectedCollectionId}
+            onChange={(val) => onCollectionChange?.(val ?? "")}
+          />
+        )}
         <Editor
           mt="lg"
           value={hintContent}

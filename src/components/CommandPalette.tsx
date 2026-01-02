@@ -8,6 +8,10 @@ import { useRouter } from "next/router";
 import CreateCollectionModal from "./Modals/CollectionModal";
 import useCollectionForm from "../hooks/useCollectionForm";
 import { useCreateCollection } from "../hooks/collectionHooks";
+import CreateHintModal from "./CreateHintModal";
+import useHintForm from "../hooks/useHintForm";
+import { trpc } from "../utils/trpc";
+import { showNotification } from "@mantine/notifications";
 
 type CommandProps = {
   isOpen: boolean,
@@ -18,9 +22,16 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
   const [page, setPage] = useState<"root" | "projects">("root");
   const [search, setSearch] = useState("");
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
+  const [isHintModalOpen, setHintModalOpen] = useState(false);
+  const [hintContent, setHintContent] = useState("");
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>("");
   const router = useRouter();
 
   const collectionForm = useCollectionForm("");
+  const hintForm = useHintForm({ title: "", content: "" });
+
+  const utils = trpc.useContext();
+  const createHintMutation = trpc.hint.create.useMutation();
 
   const mutation = useCreateCollection({
     onMutateCb: () => { setCollectionModalOpen(false) },
@@ -105,7 +116,13 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
             id: "create-hint",
             children: "Create Hint",
             icon: () => <IconListSearch color="gray" />,
-            href: "#",
+            onClick: () => {
+              setOpen(false);
+              // Delay opening the modal to allow command palette to fully close
+              setTimeout(() => {
+                setHintModalOpen(true);
+              }, 100);
+            },
           },
           {
             id: "search-hints",
@@ -152,6 +169,69 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
         onCancel={() => {
           setCollectionModalOpen(false)
           collectionForm.reset();
+        }}
+      />
+
+      <CreateHintModal
+        isModalOpen={isHintModalOpen}
+        setModalOpen={setHintModalOpen}
+        isEditing={false}
+        isHintLoading={createHintMutation.isLoading}
+        handleContentChange={(editorHtml) => setHintContent(editorHtml)}
+        hintContent={hintContent}
+        initialValues={{ title: "", content: "" }}
+        form={hintForm}
+        showCollectionSelect={true}
+        selectedCollectionId={selectedCollectionId}
+        onCollectionChange={setSelectedCollectionId}
+        onConfirm={hintForm.onSubmit((values) => {
+          if (!selectedCollectionId) {
+            showNotification({
+              title: "Error",
+              message: "Please select a collection",
+              color: "red"
+            });
+            return;
+          }
+
+          createHintMutation.mutate({
+            title: values.title,
+            collectionId: selectedCollectionId,
+            content: values.content
+          }, {
+            onSuccess: () => {
+              setHintModalOpen(false);
+              hintForm.reset();
+              setHintContent("");
+              setSelectedCollectionId("");
+              showNotification({
+                title: "Hint created",
+                message: "Hint created successfully"
+              });
+            },
+            onError: (error) => {
+              showNotification({
+                title: "Error creating hint",
+                message: error.message,
+                color: "red"
+              });
+            },
+            onSettled: () => {
+              utils.hint.getAllByCollectionId.invalidate();
+            }
+          });
+        }, hintForm.handleCreateHintError)}
+        onCancel={() => {
+          setHintModalOpen(false);
+          hintForm.reset();
+          setHintContent("");
+          setSelectedCollectionId("");
+        }}
+        onClose={() => {
+          setHintModalOpen(false);
+          hintForm.reset();
+          setHintContent("");
+          setSelectedCollectionId("");
         }}
       />
 
