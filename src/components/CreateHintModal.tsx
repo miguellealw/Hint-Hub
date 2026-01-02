@@ -1,4 +1,4 @@
-import { type MouseEventHandler, type FormEvent } from 'react';
+import { type MouseEventHandler, type FormEvent, useEffect, useRef } from 'react';
 import { Modal, Button, Group, TextInput, Tooltip, type ModalProps } from '@mantine/core';
 import Editor from './RichTextEditor';
 import { type UseFormReturnType } from '@mantine/form';
@@ -47,6 +47,22 @@ export default function CreateHintModal({
   selectedCollectionId = "",
   onCollectionChange
 }: CreateHintModalProps) {
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      // Longer timeout to ensure the modal is fully rendered and command palette is closed
+      const timer = setTimeout(() => {
+        if (titleInputRef.current) {
+          titleInputRef.current.focus();
+          titleInputRef.current.select();
+        }
+      }, 200);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isModalOpen]);
+
   return (
     <Modal
       opened={isModalOpen}
@@ -57,7 +73,7 @@ export default function CreateHintModal({
     >
       <LoadingOverlay visible={isHintLoading} />
       <form onSubmit={onConfirm}>
-        <TextInput label="Title" placeholder="Title" data-autofocus {...form.getInputProps('title')} />
+        <TextInput ref={titleInputRef} label="Title" placeholder="Title" data-autofocus {...form.getInputProps('title')} />
         {showCollectionSelect && (
           <CollectionSelect
             mt="md"
