@@ -52,7 +52,7 @@ export default function RREditor({ ...props }) {
 
 
   return (
-    <RichTextEditor editor={editor} placeholder="hint here" {...props} >
+    <RichTextEditor editor={editor} {...props} >
       <RichTextEditor.Toolbar sticky>
         <RichTextEditor.ControlsGroup>
           <RichTextEditor.Bold />
