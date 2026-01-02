@@ -98,6 +98,7 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
             icon: () => <IconReportSearch color="gray" />,
             closeOnSelect: false,
             onClick: () => {
+              setSearch("");
               setPage("collections");
             },
           },
@@ -127,6 +128,7 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
             icon: () => <IconFilePlus color="gray" />,
             closeOnSelect: false,
             onClick: () => {
+              setSearch("");
               setPage("hints");
             },
           },
@@ -281,6 +283,7 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
               <CommandPalette.List heading="Actions">
                 <CommandPalette.ListItem
                   index={collections.length}
+                  closeOnSelect={false}
                   onClick={() => setPage("root")}
                 >
                   ← Back to main menu
@@ -291,6 +294,7 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
             <CommandPalette.List>
               <CommandPalette.ListItem
                 index={0}
+                closeOnSelect={false}
                 onClick={() => setPage("root")}
               >
                 ← Back to main menu
@@ -325,6 +329,7 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
               <CommandPalette.List heading="Actions">
                 <CommandPalette.ListItem
                   index={allHints.length}
+                  closeOnSelect={false}
                   onClick={() => setPage("root")}
                 >
                   ← Back to main menu
@@ -335,6 +340,7 @@ const Command = ({ isOpen, setOpen }: CommandProps) => {
             <CommandPalette.List>
               <CommandPalette.ListItem
                 index={0}
+                closeOnSelect={false}
                 onClick={() => setPage("root")}
               >
                 ← Back to main menu
