@@ -3,7 +3,7 @@ import { Modal, Button, Group, TextInput } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import LoadingOverlay from '../LoadingOverlay';
 
-type CreateHintModalProps = {
+type CreateCollectionModalProps = {
   isModalOpen: boolean;
   currentName?: string,
 
@@ -25,7 +25,7 @@ export default function CreateCollectionModal({
   form,
   isEditing,
   isCollectionsLoading,
-}: CreateHintModalProps) {
+}: CreateCollectionModalProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

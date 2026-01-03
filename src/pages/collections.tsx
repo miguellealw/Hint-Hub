@@ -4,7 +4,6 @@ import { IconFolderPlus } from "@tabler/icons";
 import { type NextPage } from "next";
 import MainLayout from "../components/layouts/MainLayout";
 import SearchBar from "../components/InputWithButton";
-// import CreateHintModal from "./components/CreateHintModal";
 import CreateCollectionModal from "../components/Modals/CollectionModal";
 import { trpc } from "../utils/trpc";
 import { type Collection } from "@prisma/client";
@@ -53,7 +52,6 @@ const Collections: NextPage = () => {
 
   const { classes } = useStyles();
   useHotkeys([
-    // ["c", () => setHintModalOpen(true)],
     ["o", () => setCollectionModalOpen(true)],
     ["/", () => searchBarRef.current?.focus()]
   ])
@@ -110,22 +108,11 @@ const Collections: NextPage = () => {
           collectionForm.reset();
         }}
       />
-      {/* <CreateHintModal 
-          isModalOpen={isHintModalOpen} setModalOpen={setHintModalOpen} 
-          onConfirm = {(e) => {}}
-          onCancel = {() => { setHintModalOpen(false); }}
-        /> */}
 
       <Group position="apart" align="center" my="xl">
         <Title align="center" className={classes.heading}>My Collections</Title>
 
-        {/* TODO: show cmd or ctrl depending on OS */}
         <Group>
-          {/* <Tooltip label="Create Hint ('C')">
-              <Button variant="subtle" color="indigo.5" leftIcon={<IconFilePlus size={18} />} onClick={() => setHintModalOpen(true)}>
-                Create Hint
-              </Button>
-            </Tooltip> */}
           <Tooltip label="Create Collection ('O')">
 
             <Button

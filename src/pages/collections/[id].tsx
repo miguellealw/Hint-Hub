@@ -4,7 +4,6 @@ import { type NextPage } from "next";
 import SearchBar from "../../components/InputWithButton";
 import MainLayout from "../../components/layouts/MainLayout";
 import { useRef, useState } from 'react';
-import CreateHintModal from "../../components/CreateHintModal";
 import { useHotkeys } from "@mantine/hooks";
 import HintCard from "../../components/HintCard";
 import { trpc } from "../../utils/trpc";
@@ -14,9 +13,7 @@ import { showNotification } from "@mantine/notifications";
 import CreateCollectionModal from "../../components/Modals/CollectionModal";
 import { useSession } from "next-auth/react";
 import { useDeleteCollection, useUpdateCollection } from "../../hooks/collectionHooks";
-import useHintForm from "../../hooks/useHintForm";
 import useCollectionForm from "../../hooks/useCollectionForm";
-import type { Hint } from "@prisma/client";
 import useUnauthed from "../../hooks/useUnauthed";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import { useLargeScreen } from "../../hooks/useMediaQueries";
@@ -29,7 +26,6 @@ const useStyles = createStyles((theme) => ({
 }))
 
 const SingleCollection: NextPage = () => {
-  const [isHintModalOpen, setHintModalOpen] = useState(false);
   const [isCollectionModalOpen, setCollectionModalOpen] = useState(false);
   const searchBarRef = useRef<HTMLInputElement>(null);
   const [currentCollectionName, setCurrentCollectionName] = useState("");
@@ -40,12 +36,7 @@ const SingleCollection: NextPage = () => {
   const { status } = useUnauthed();
   const { data: session } = useSession();
 
-  // New hint state
-  const [hintContent, setHintContent] = useState("");
-  const [selectedHint, setSelectedHint] = useState<Hint | undefined>(undefined);
-
   // forms
-  const hintForm = useHintForm({ title: "", content: "" });
   const collectionForm = useCollectionForm(currentCollectionName);
 
   // router
@@ -73,8 +64,6 @@ const SingleCollection: NextPage = () => {
     }
   });
 
-  const createHintMutation = trpc.hint.create.useMutation();
-  const updateHintMutation = trpc.hint.update.useMutation();
   const deleteHintMutation = trpc.hint.delete.useMutation();
   const {
     data: hints,
@@ -91,7 +80,7 @@ const SingleCollection: NextPage = () => {
   const utils = trpc.useContext();
 
   useHotkeys([
-    ["c", () => setHintModalOpen(true)],
+    ["c", () => router.push(`/hints/new?collectionId=${currentCollectionId}`)],
     ["o", () => setCollectionModalOpen(true)],
     ["/", () => searchBarRef.current?.focus()]
   ])
@@ -147,74 +136,6 @@ const SingleCollection: NextPage = () => {
               })
             }, collectionForm.handleEditCollectionError)}
             onCancel={() => { setCollectionModalOpen(false) }}
-          />
-          <CreateHintModal
-            isModalOpen={isHintModalOpen}
-            setModalOpen={setHintModalOpen}
-            isEditing={typeof selectedHint !== "undefined"}
-            isHintLoading={createHintMutation.isLoading || updateHintMutation.isLoading}
-
-            handleContentChange={(editorHtml) => setHintContent(editorHtml)}
-            hintContent={hintContent}
-
-            // if hint is being edited, set the form values to the selected hint
-            initialValues={
-              typeof selectedHint !== "undefined" ?
-                { title: selectedHint.title, content: selectedHint.content } :
-                { title: "", content: "" }
-            }
-
-
-
-            form={hintForm}
-            onConfirm={hintForm.onSubmit((values) => {
-              // TODO: optimistic update
-              if (typeof selectedHint !== "undefined") {
-                updateHintMutation.mutate({
-                  id: selectedHint.id,
-                  title: values.title,
-                  content: values.content,
-                }, {
-                  onSuccess: () => {
-                    setHintModalOpen(false);
-                    setSelectedHint(undefined); // reset selected hint
-                    hintForm.reset();
-                    showNotification({ title: "Hint updated", message: "Hint updated successfully" })
-                  },
-                  onError: (error) => {
-                    showNotification({ title: "Error updating hint", message: error.message, color: "red" })
-                  },
-                  onSettled: () => {
-                    utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId, searchValue: "" });
-                  }
-                })
-              } else {
-                createHintMutation.mutate({
-                  title: values.title,
-                  collectionId: currentCollectionId,
-                  content: values.content
-                }, {
-                  onSuccess: () => {
-                    setHintModalOpen(false);
-                    hintForm.reset();
-                    showNotification({ title: "Hint created", message: "Hint created successfully" })
-                  },
-                  onError: (error) => {
-                    showNotification({ title: "Error creating hint", message: error.message, color: "red" })
-                  },
-                  onSettled: () => {
-                    utils.hint.getAllByCollectionId.invalidate({ collectionId: currentCollectionId, searchValue: "" });
-                  }
-                })
-              }
-
-            }, hintForm.handleCreateHintError)}
-            onCancel={() => { setHintModalOpen(false) }}
-            onClose={() => {
-              setHintModalOpen(false);
-              hintForm.reset();
-              setSelectedHint(undefined); // reset selected hint
-            }}
           />
 
           <Group position="apart" align="center" my="xl" style={{ width: "100%" }}>
@@ -305,7 +226,7 @@ const SingleCollection: NextPage = () => {
               <Button
                 color="indigo.8"
                 leftIcon={<IconFilePlus size={18} />}
-                onClick={() => setHintModalOpen(true)}
+                onClick={() => router.push(`/hints/new?collectionId=${currentCollectionId}`)}
               >
                 Create Hint
               </Button>
@@ -335,8 +256,7 @@ const SingleCollection: NextPage = () => {
                               key={hint.id}
                               hint={hint}
                               onEdit={() => {
-                                setHintModalOpen(true)
-                                setSelectedHint(hint);
+                                router.push(`/hints/new?hintId=${hint.id}`);
                               }}
                               onDelete={() => {
                                 deleteHintMutation.mutate({ id: hint.id }, {
