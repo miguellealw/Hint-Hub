@@ -40,7 +40,7 @@ export default function MainLayout({ children, containerSize, containerClass, ..
 
   return (
     <div className={classes.wrapper}>
-      <MainHeader />
+      <MainHeader onOpenCommandPalette={() => setCommandPaletteOpen(true)} />
       <main {...props}>
         <CommandPalette isOpen={isCommandPaletteOpen} setOpen={setCommandPaletteOpen} />
         <Container size={containerSize} className={containerClass ? `${classes.container} ${containerClass}` : classes.container}>
@@ -54,11 +54,14 @@ export default function MainLayout({ children, containerSize, containerClass, ..
 
 export function MainLandingLayout({ children, containerSize, containerClass, ...props }: MainLayoutProps) {
   const { classes } = useStyle();
+  const [ isCommandPaletteOpen, setCommandPaletteOpen ] = useState<boolean>(false);
+
   return (
     <div className={classes.wrapper}>
-      <MainHeader />
+      <MainHeader onOpenCommandPalette={() => setCommandPaletteOpen(true)} />
       <Waves className={classes.waves} />
       <main {...props}>
+        <CommandPalette isOpen={isCommandPaletteOpen} setOpen={setCommandPaletteOpen} />
         <Container size={containerSize} className={containerClass ? `${classes.container} ${containerClass}` : classes.container}>
           {/* <Container size={containerSize} className={containerClass}> */}
           {children}

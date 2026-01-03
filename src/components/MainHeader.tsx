@@ -8,7 +8,11 @@ import HeaderMenu from "./HeaderMenu";
 import IconSetTheme from "./IconSetTheme";
 import Logo from "./Logo";
 
-const MainHeader = () => {
+type MainHeaderProps = {
+  onOpenCommandPalette?: () => void;
+}
+
+const MainHeader = ({ onOpenCommandPalette }: MainHeaderProps) => {
   const { data: session } = useSession();
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -40,8 +44,7 @@ const MainHeader = () => {
                 {!isLargeScreen ? (
                   <HeaderMenu name={session.user?.name}
                     onClickCollections={() => { router.push("/collections") }}
-                    // onClickCommand={() => spotlight.openSpotlight()}
-                    onClickCommand={() => console.log("Command Palette")}
+                    onClickCommand={() => onOpenCommandPalette?.()}
                     onClickLogout={session ? () => signOut() : () => signIn()}
                     targetComponent={
                       <Avatar
@@ -78,7 +81,7 @@ const MainHeader = () => {
 
                       {/* TODO: change command icon on windows */}
                       <Tooltip label="Command Palette (⌘ + K)" position="bottom">
-                        <ActionIcon color="dark" onClick={() => console.log("Command")} style={{ cursor: "pointer" }}>
+                        <ActionIcon color="dark" onClick={() => onOpenCommandPalette?.()} style={{ cursor: "pointer" }}>
                           <IconCommand size={20} />
                         </ActionIcon>
                       </Tooltip> 
