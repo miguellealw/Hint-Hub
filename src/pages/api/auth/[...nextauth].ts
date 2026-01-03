@@ -21,7 +21,14 @@ export const authOptions: NextAuthOptions = {
       // Allows callback URLs on the same origin
       else if (new URL(url).origin === baseUrl) return url
       return baseUrl
-    }
+    },
+    async signIn({ user, account, profile, email, credentials }) {
+      console.log('SignIn callback:', { user, account, profile });
+      return true;
+    },
+  },
+  pages: {
+    error: '/auth/error',
   },
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
