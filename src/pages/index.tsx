@@ -10,8 +10,9 @@ const useStyles = createStyles((theme) => ({
   wrapper: {
     position: 'relative',
     boxSizing: 'border-box',
+    minHeight: '100vh',
     background: theme.colorScheme === 'dark'
-      ? 'linear-gradient(-20deg, #2b5876 0%, #4e4376 100%)'
+      ? 'radial-gradient(circle at center, #2b5876 0%, #4e4376 100%)'
       : 'radial-gradient(circle at center, #e6dee9 0%, #bdc2e8 100%)',
   },
 
@@ -191,7 +192,7 @@ function FeaturesSection() {
                   radius="md"
                   variant="gradient"
                   gradient={theme.colorScheme === 'dark'
-                    ? { from: '#ece1ff', to: '#8c83ff', deg: 180 }
+                    ? { from: '#6161ff', to: '#8c83ff', deg: 180 }
                     : { from: '#9e7aec', to: '#1d00e8', deg: 45 }
                   }
                 >
@@ -226,7 +227,7 @@ export function HeroTitle() {
           component="span"
           variant="gradient"
           gradient={theme.colorScheme === 'dark'
-            ? { from: '#ece1ff', to: '#8c83ff', deg: 180 }
+            ? { from: '#6161ff', to: '#8c83ff', deg: 180 }
             : { from: '#9e7aec', to: '#1d00e8', deg: 45 }
           }
           inherit
@@ -248,7 +249,7 @@ export function HeroTitle() {
           className={classes.control}
           variant="gradient"
           gradient={theme.colorScheme === 'dark'
-            ? { from: '#ece1ff', to: '#8c83ff', deg: 180 }
+            ? { from: '#6161ff', to: '#8c83ff', deg: 180 }
             : { from: '#9e7aec', to: '#1d00e8', deg: 45 }
           }
           onClick={() => {
