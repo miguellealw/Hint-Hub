@@ -1,6 +1,7 @@
 import { Container, createStyles, type MantineNumberSize } from '@mantine/core'
 import { useState } from 'react';
 import CommandPalette from '../CommandPalette';
+import FloatingActionButtons from '../FloatingActionButtons';
 import MainHeader from '../MainHeader'
 import Waves from '../Waves';
 
@@ -48,6 +49,7 @@ export default function MainLayout({ children, containerSize, containerClass, ..
           {children}
         </Container>
       </main>
+      <FloatingActionButtons onOpenCommandPalette={() => setCommandPaletteOpen(true)} />
     </div>
   )
 }
@@ -67,6 +69,7 @@ export function MainLandingLayout({ children, containerSize, containerClass, ...
           {children}
         </Container>
       </main>
+      <FloatingActionButtons onOpenCommandPalette={() => setCommandPaletteOpen(true)} showCommandPalette={false} />
     </div>
   )
 }

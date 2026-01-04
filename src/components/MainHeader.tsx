@@ -1,11 +1,10 @@
 import { Container, Header, Group, Text, Tooltip, Divider, ActionIcon, Avatar, useMantineColorScheme } from "@mantine/core";
-import { IconBoxMultiple, IconCommand, IconLogin, IconLogout } from "@tabler/icons";
+import { IconBoxMultiple, IconLogin, IconLogout } from "@tabler/icons";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useLargeScreen } from "../hooks/useMediaQueries";
 import HeaderMenu from "./HeaderMenu";
-import IconSetTheme from "./IconSetTheme";
 import Logo from "./Logo";
 
 type MainHeaderProps = {
@@ -31,12 +30,11 @@ const MainHeader = ({ onOpenCommandPalette }: MainHeaderProps) => {
           height: "100%",
         }}>
 
-        <Link href={"/"}>
+        <Link href={session ? "/collections" : "/"}>
           <Logo color={isDark ? "light" : "dark"} />
         </Link>
 
         <Group>
-          <IconSetTheme />
           {
             session &&
             (
@@ -78,13 +76,6 @@ const MainHeader = ({ onOpenCommandPalette }: MainHeaderProps) => {
                           </ActionIcon>
                         </Link>
                       </Tooltip>
-
-                      {/* TODO: change command icon on windows */}
-                      <Tooltip label="Command Palette (⌘ + K)" position="bottom">
-                        <ActionIcon color="dark" onClick={() => onOpenCommandPalette?.()} style={{ cursor: "pointer" }}>
-                          <IconCommand size={20} />
-                        </ActionIcon>
-                      </Tooltip> 
                     </Group>
 
                     <Divider orientation="vertical" />
