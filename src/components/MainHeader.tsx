@@ -56,27 +56,17 @@ const MainHeader = ({ onOpenCommandPalette }: MainHeaderProps) => {
                     } />
                 ) : (
                   <>
-                    <Group>
-                      <Text
-                        style={{
-                          maxWidth: "100px",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                        color="indigo.5"
-                        fw="bold">
-                        {session.user?.name}
-                      </Text>
-
-                      <Tooltip label="My Collections" position="bottom">
-                        <Link href="/collections">
-                          <ActionIcon color="indigo">
-                            <IconBoxMultiple size={20} />
-                          </ActionIcon>
-                        </Link>
-                      </Tooltip>
-                    </Group>
+                    <Text
+                      style={{
+                        maxWidth: "100px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      color="indigo.5"
+                      fw="bold">
+                      {session.user?.name}
+                    </Text>
 
                     <Divider orientation="vertical" />
 

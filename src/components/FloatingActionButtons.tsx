@@ -1,5 +1,7 @@
 import { ActionIcon, Stack, Tooltip, useMantineColorScheme, createStyles } from '@mantine/core';
-import { IconCommand, IconSun, IconMoonStars } from '@tabler/icons';
+import { IconCommand, IconSun, IconMoonStars, IconBoxMultiple } from '@tabler/icons';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 const useStyles = createStyles((theme) => ({
   floatingContainer: {
@@ -44,9 +46,26 @@ export default function FloatingActionButtons({
   const { classes } = useStyles();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const isDark = colorScheme === 'dark';
+  const { data: session } = useSession();
+  const router = useRouter();
+  const isOnCollectionsPage = router.pathname === '/collections';
 
   return (
     <Stack className={classes.floatingContainer} spacing="md">
+      {session && !isOnCollectionsPage && (
+        <Tooltip label="My Collections" position="left">
+          <ActionIcon
+            className={classes.actionButton}
+            variant="filled"
+            color="indigo"
+            onClick={() => router.push('/collections')}
+            aria-label="My Collections"
+          >
+            <IconBoxMultiple size={24} />
+          </ActionIcon>
+        </Tooltip>
+      )}
+
       {showCommandPalette && (
         <Tooltip label="Command Palette (⌘ + K)" position="left">
           <ActionIcon

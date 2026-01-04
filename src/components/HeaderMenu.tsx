@@ -23,13 +23,6 @@ export default function HeaderMenu({ targetComponent, name, onClickCollections, 
 
       <Menu.Dropdown>
         <Menu.Label>{name ?? "Menu"}</Menu.Label>
-        <Menu.Item icon={<IconBoxMultiple size={14}/>} onClick={onClickCollections}>Collections</Menu.Item>
-        <Menu.Item icon={<IconCommand size={14} />} onClick={onClickCommand}>Command Prompt</Menu.Item>
-        {/* TODO: for future */}
-        {/* <Menu.Item icon={<IconShare size={14}/>}>Share</Menu.Item> */}
-
-
-        <Menu.Divider />
         <Menu.Item color="indigo" icon={<IconLogout size={14} />} onClick={onClickLogout}>Log out</Menu.Item>
       </Menu.Dropdown>
     </Menu>
