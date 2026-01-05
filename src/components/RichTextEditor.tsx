@@ -8,6 +8,24 @@ import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { lowlight } from 'lowlight';
+import { createStyles } from '@mantine/core';
+
+const useStyles = createStyles((theme) => ({
+  editor: {
+    '& .mantine-RichTextEditor-content': {
+      minHeight: '400px',
+      [theme.fn.smallerThan('sm')]: {
+        minHeight: '500px',
+      },
+    },
+    '& .ProseMirror': {
+      minHeight: '400px',
+      [theme.fn.smallerThan('sm')]: {
+        minHeight: '500px',
+      },
+    },
+  },
+}));
 
 // const content =
 //   '<h2 style="text-align: left;">Welcome to Mantine rich text editor</h2><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul> <pre><code class="language-java">public class HelloWorld {<br>  public static void main(String[] args) {<br>    System.out.println("Hello World");<br>  }<br>}<br></code></pre>';
@@ -26,6 +44,7 @@ import { lowlight } from 'lowlight';
 // const content = ""
 
 export default function RREditor({ ...props }) {
+  const { classes } = useStyles();
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -52,7 +71,7 @@ export default function RREditor({ ...props }) {
 
 
   return (
-    <RichTextEditor editor={editor} {...props} >
+    <RichTextEditor editor={editor} {...props} className={classes.editor}>
       <RichTextEditor.Toolbar sticky>
         <RichTextEditor.ControlsGroup>
           <RichTextEditor.Bold />
