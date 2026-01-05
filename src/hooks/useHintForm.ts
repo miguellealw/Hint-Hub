@@ -9,9 +9,9 @@ type HintFormValues = {
 
 const schema = z.object({
   title: z.string().trim().min(2).max(40, "Title field must 2 - 40 characters"),
-  // TODO: figure out if 1000 chars is fine
-  // TODO: content is not being validated
-  content: z.string().trim().min(2).max(1000, "Content field must 2 - 1000 characters")
+  // Don't trim content since it's HTML from rich text editor
+  // Trimming HTML can break formatting and cause validation issues with pasted content
+  content: z.string().min(1).max(50000, "Content field must not exceed 50000 characters")
 
 })
 

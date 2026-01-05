@@ -98,11 +98,32 @@ const NewHint: NextPage = () => {
             router.push(`/collections/${selectedCollectionId}`);
           },
           onError: (error) => {
-            showNotification({
-              title: "Error updating hint",
-              message: error.message,
-              color: "red"
-            });
+            // Parse error message - it might be a JSON array of errors
+            try {
+              const errors = JSON.parse(error.message);
+              if (Array.isArray(errors)) {
+                errors.forEach((err: { message: string }) => {
+                  showNotification({
+                    title: "Error updating hint",
+                    message: err.message,
+                    color: "red"
+                  });
+                });
+              } else {
+                showNotification({
+                  title: "Error updating hint",
+                  message: error.message,
+                  color: "red"
+                });
+              }
+            } catch {
+              // If parsing fails, just show the message as-is
+              showNotification({
+                title: "Error updating hint",
+                message: error.message,
+                color: "red"
+              });
+            }
           },
           onSettled: () => {
             utils.hint.getAllByCollectionId.invalidate({
@@ -125,11 +146,32 @@ const NewHint: NextPage = () => {
             router.push(`/collections/${selectedCollectionId}`);
           },
           onError: (error) => {
-            showNotification({
-              title: "Error creating hint",
-              message: error.message,
-              color: "red"
-            });
+            // Parse error message - it might be a JSON array of errors
+            try {
+              const errors = JSON.parse(error.message);
+              if (Array.isArray(errors)) {
+                errors.forEach((err: { message: string }) => {
+                  showNotification({
+                    title: "Error creating hint",
+                    message: err.message,
+                    color: "red"
+                  });
+                });
+              } else {
+                showNotification({
+                  title: "Error creating hint",
+                  message: error.message,
+                  color: "red"
+                });
+              }
+            } catch {
+              // If parsing fails, just show the message as-is
+              showNotification({
+                title: "Error creating hint",
+                message: error.message,
+                color: "red"
+              });
+            }
           },
           onSettled: () => {
             utils.hint.getAllByCollectionId.invalidate({

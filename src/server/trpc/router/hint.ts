@@ -62,7 +62,7 @@ export const hintRouter = router({
     .input(
       z.object({
         title: z.string().trim().min(2).max(40, "Title field must 2 - 40 characters"),
-        content: z.string().trim().min(5).max(1000, "Content field must 5 - 1000 characters"),
+        content: z.string().min(1).max(50000, "Content field must not exceed 50000 characters"),
         collectionId: z.string(),
       })
     )
@@ -82,7 +82,7 @@ export const hintRouter = router({
       z.object({
         id: z.string(),
         title: z.string().trim().min(2).max(40, "Title field must 2 - 40 characters"),
-        content: z.string().trim().min(2).max(1000, "Content field must 2 - 1000 characters"),
+        content: z.string().min(1).max(50000, "Content field must not exceed 50000 characters"),
       })
     )
     .mutation(({ input, ctx }) => {
